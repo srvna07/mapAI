@@ -6,19 +6,25 @@ class LoginPage(BasePage):
 
     def __init__(self, page: Page):
         super().__init__(page)
-        self.username_input = page.get_by_label("Username")
-        self.password_input = page.get_by_label("Password")
-        self.login_button   = page.get_by_role("button", name="Login")
+        self.login_btn      = page.get_by_role("button", name="Login")
+        self.email_input    = page.get_by_role("textbox", name="Email Address *")
+        self.password_input = page.get_by_role("textbox", name="Password *")
+        self.sign_in_button = page.get_by_role("button", name="Sign In")
+        self.welcome_text   = page.get_by_text("Welcome to Multi Agent")
 
     def navigate(self, base_url: str):
         self.navigate_to(base_url)
+        self.login_btn.click()
 
-    def login(self, username: str, password: str):
-        self.username_input.fill(username)
+    def login(self, email: str, password: str):
+        self.email_input.fill(email)
         self.password_input.fill(password)
-        self.login_button.click()
+        self.sign_in_button.click()
 
     def verify_page_loaded(self):
-        expect(self.username_input).to_be_visible()
+        expect(self.email_input).to_be_visible()
         expect(self.password_input).to_be_visible()
-        expect(self.login_button).to_be_visible()
+        expect(self.sign_in_button).to_be_visible()
+
+    def verify_login_success(self):
+        expect(self.welcome_text).to_be_visible()

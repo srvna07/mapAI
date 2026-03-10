@@ -40,7 +40,9 @@ def setup_auth(browser: Browser, credentials):
     login = LoginPage(pg)
     login.navigate(config["base_url"])
     login.login(credentials["username"], credentials["password"])
-    pg.wait_for_url("**/dashboard")
+    pg.wait_for_function(
+        "() => { const auth = localStorage.getItem('persist:root'); if (!auth) return false; const parsed = JSON.parse(JSON.parse(auth).auth); return parsed.data !== null; }"
+    )
     context.storage_state(path=str(AUTH_STATE_FILE))
     context.close()
 
@@ -49,7 +51,7 @@ def setup_auth(browser: Browser, credentials):
 def authenticated_page(page: Page):
     page.set_default_timeout(config["default_timeout"])
     page.set_default_navigation_timeout(config["navigation_timeout"])
-    page.goto(config["base_url"] + "/dashboard")
+    page.goto(config["base_url"])
     return page
 
 
