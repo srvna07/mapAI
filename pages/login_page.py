@@ -11,6 +11,7 @@ class LoginPage(BasePage):
         self.password_input = page.get_by_role("textbox", name="Password *")
         self.sign_in_button = page.get_by_role("button", name="Sign In")
         self.welcome_text   = page.get_by_text("Welcome to Multi Agent")
+        self.new_chat_btn   = page.get_by_role("button", name="New Chat")
 
     def navigate(self, base_url: str):
         self.navigate_to(base_url)
@@ -28,3 +29,6 @@ class LoginPage(BasePage):
 
     def verify_login_success(self):
         expect(self.welcome_text).to_be_visible()
+
+    def verify_new_chat_btn_present(self):
+        expect(self.new_chat_btn).to_be_visible()

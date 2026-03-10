@@ -13,6 +13,11 @@ config = DataReader.load_json(f"configs/{ENV}.json")
 AUTH_STATE_FILE = Path("test-results/.auth/state.json")
 
 
+def apply_timeouts(pg):
+    pg.set_default_timeout(config["default_timeout"])
+    pg.set_default_navigation_timeout(config["navigation_timeout"])
+
+
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args):
     return {**browser_type_launch_args, "args": ["--start-maximized"]}
@@ -35,8 +40,7 @@ def setup_auth(browser: Browser, credentials):
     AUTH_STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
     context = browser.new_context(no_viewport=True)
     pg = context.new_page()
-    pg.set_default_timeout(config["default_timeout"])
-    pg.set_default_navigation_timeout(config["navigation_timeout"])
+    apply_timeouts(pg)
     login = LoginPage(pg)
     login.navigate(config["base_url"])
     login.login(credentials["username"], credentials["password"])
@@ -49,16 +53,14 @@ def setup_auth(browser: Browser, credentials):
 
 @pytest.fixture
 def authenticated_page(page: Page):
-    page.set_default_timeout(config["default_timeout"])
-    page.set_default_navigation_timeout(config["navigation_timeout"])
+    apply_timeouts(page)
     page.goto(config["base_url"])
     return page
 
 
 @pytest.fixture
 def login_page(page: Page):
-    page.set_default_timeout(config["default_timeout"])
-    page.set_default_navigation_timeout(config["navigation_timeout"])
+    apply_timeouts(page)
     return LoginPage(page)
 
 
