@@ -1,0 +1,18 @@
+{
+  "user": {
+    "firstName": "Test",
+    "lastName": "User",
+    "usernamePrefix": "test_user",
+    "emailDomain": "@example.com",
+    "password": "Test@1234!"
+  },
+  "contact": {
+    "phone": "+1 000-000-0000",
+    "address1": "123 Test Street",
+    "address2": "Suite 1",
+    "city": "Test City",
+    "state": "TS",
+    "country": "Testland",
+    "zipCode": "00000"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "base_url": "https://your-app.com",
+  "api_url": "https://api.your-app.com",
+  "browser": "chromium",
+  "default_timeout": 30000,
+  "navigation_timeout": 45000,
+  "record_video_size": {
+    "width": 1280,
+    "height": 720
+  }
+}

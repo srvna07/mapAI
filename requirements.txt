@@ -1,0 +1,17 @@
+# Core browser automation
+playwright==1.51.0
+pytest-playwright==0.7.0
+
+# Test framework
+pytest==8.3.5
+
+# Environment + config
+python-dotenv==1.0.1
+
+# API testing
+requests==2.32.3
+
+# Test utilities
+pytest-ordering==0.6
+pytest-html==4.1.1
+pytest-xdist==3.6.1
