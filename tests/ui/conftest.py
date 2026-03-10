@@ -2,10 +2,14 @@ import pytest
 from pathlib import Path
 from datetime import datetime
 from playwright.sync_api import Page, Browser
+import json
+import os
 
 from utils.env_loader import get_env
 from utils.data_reader import DataReader
+from utils.data_factory import DataFactory
 from pages.login_page import LoginPage
+from pages.users_page import UsersPage
 
 ENV = get_env()
 config = DataReader.load_json(f"configs/{ENV}.json")
@@ -83,3 +87,36 @@ def pytest_runtest_makereport(item, call):
             screenshots_dir.mkdir(exist_ok=True)
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             pg.screenshot(path=str(screenshots_dir / f"{item.name}_{timestamp}.png"), full_page=True)
+
+
+
+# Users page fixture
+@pytest.fixture
+def users_page(page):
+    users_page_obj = UsersPage(page)
+    return users_page_obj
+
+
+@pytest.fixture
+def test_data():
+    # Load your static JSON file
+    path = os.path.join(os.path.dirname(__file__), "testdata/users_page_test_data.json")
+    with open(path) as f:
+        data = json.load(f)
+
+    # Setup Data for "Create"
+    user = data["users"]
+    user["first_name"] = DataFactory.generate_first_name()
+    user["last_name"]  = DataFactory.generate_last_name()
+    user["email"]      = DataFactory.random_email()
+    user["phone"]      = DataFactory.generate_phone()
+    user["password"]   = DataFactory.generate_password()
+
+    # Setup Data for "Edit"
+    edited = data["edited_users"]
+    edited["first_name"] = DataFactory.generate_first_name(prefix="Edited")
+    edited["last_name"]  = DataFactory.generate_last_name(prefix="Edited")
+    user["email"]      = DataFactory.random_email(prefix="Edited")
+    edited["phone"]      = DataFactory.generate_phone()
+
+    return data

@@ -24,3 +24,24 @@ class DataFactory:
     @staticmethod
     def timestamped_name(prefix: str = "test") -> str:
         return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    @staticmethod
+    def generate_first_name(prefix: str = "User") -> str:
+        return f"{prefix}_{DataFactory.random_string()}"
+    
+    @staticmethod
+    def generate_last_name(prefix: str = "Test") -> str:
+        return f"{prefix}_{DataFactory.random_string()}"
+    
+    @staticmethod
+    def generate_phone() -> str:
+        # Generates a random 10-digit number starting with 7, 8, or 9
+        first_digit = random.choice("6789")
+        remaining = "".join(random.choices(string.digits, k=9))
+        return first_digit + remaining
+    
+    @staticmethod
+    def generate_password(length: int = 8) -> str:
+        # Ensures password contains letters, digits, and punctuation
+        chars = string.ascii_letters + string.digits + "!@#$%^&*"
+        return "".join(random.choices(chars, k=length))
