@@ -42,7 +42,7 @@ def setup_auth(browser: Browser, credentials):
     pg = context.new_page()
     apply_timeouts(pg)
     login = LoginPage(pg)
-    login.navigate(config["base_url"])
+    login.navigate()
     login.login(credentials["username"], credentials["password"])
     pg.wait_for_function(
         "() => { const auth = localStorage.getItem('persist:root'); if (!auth) return false; const parsed = JSON.parse(JSON.parse(auth).auth); return parsed.data !== null; }"
@@ -59,9 +59,17 @@ def authenticated_page(page: Page):
 
 
 @pytest.fixture
-def login_page(page: Page):
-    apply_timeouts(page)
-    return LoginPage(page)
+def unauth_page(browser: Browser):
+    context = browser.new_context(no_viewport=True)
+    pg = context.new_page()
+    apply_timeouts(pg)
+    yield pg
+    context.close()
+
+
+@pytest.fixture
+def login_page(unauth_page):
+    return LoginPage(unauth_page)
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -69,7 +77,7 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     rep = outcome.get_result()
     if rep.when == "call" and rep.failed:
-        pg = item.funcargs.get("authenticated_page") or item.funcargs.get("page")
+        pg = item.funcargs.get("authenticated_page") or item.funcargs.get("unauth_page")
         if pg:
             screenshots_dir = Path(__file__).parent.parent.parent / "screenshots"
             screenshots_dir.mkdir(exist_ok=True)

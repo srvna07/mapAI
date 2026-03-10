@@ -1,5 +1,10 @@
 from playwright.sync_api import Page, expect
 from .base_page import BasePage
+from utils.env_loader import get_env
+from utils.data_reader import DataReader
+
+ENV = get_env()
+config = DataReader.load_json(f"configs/{ENV}.json")
 
 
 class LoginPage(BasePage):
@@ -13,8 +18,8 @@ class LoginPage(BasePage):
         self.welcome_text   = page.get_by_text("Welcome to Multi Agent")
         self.new_chat_btn   = page.get_by_role("button", name="New Chat")
 
-    def navigate(self, base_url: str):
-        self.navigate_to(base_url)
+    def navigate(self):
+        self.navigate_to(config["base_url"])
         self.login_btn.click()
 
     def login(self, email: str, password: str):
