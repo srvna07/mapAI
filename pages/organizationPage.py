@@ -38,6 +38,7 @@ class OrganizationsPage(BasePage):
         self.new_organization_btn.click()
 
     def navigate_to_organizations(self):
+        self.settings_icon.click()
         self.organization_btn.click()
 
     def fill_basic_info(self, org_name: str):
@@ -59,6 +60,9 @@ class OrganizationsPage(BasePage):
             self.page.get_by_role("option", name=agent).click()
         sleep(5)  # Wait agents selection
         self.agent_dropdown.click()  # Close dropdown
+
+    def open_agent_dropdown(self):
+        self.agent_dropdown.click()
 
     def submit_form(self):
         self.save_btn.click()
@@ -123,4 +127,7 @@ class OrganizationsPage(BasePage):
         self.search_organization(org_name)
         expect(self.page.get_by_role("cell", name=org_name).first).not_to_be_visible()
 
+    def verify_agents(self, agents):
+        for agent in agents:
+            expect(self.page.get_by_role("option", name=agent)).to_be_selected()
 

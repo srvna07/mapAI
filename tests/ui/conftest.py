@@ -100,3 +100,8 @@ def new_organization_data():
     data = DataReader.load_yaml("testdata/new_organization.yaml")
     data["organization"]["name"]   = DataFactory.generate_org_name()
     return data
+
+def update_organization_data():
+    data = DataReader.load_json("testdata/update_org.json")
+    data["updated_basic"]["name"] = DataFactory.generate_org_name()
+    return data
