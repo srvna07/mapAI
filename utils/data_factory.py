@@ -24,3 +24,7 @@ class DataFactory:
     @staticmethod
     def timestamped_name(prefix: str = "test") -> str:
         return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    @staticmethod
+    def generate_org_name(prefix="test_org"):
+        return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
