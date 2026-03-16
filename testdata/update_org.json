@@ -1,0 +1,18 @@
+{
+  "organization": {
+    "name": "test_org"
+  },
+  "contact": {
+    "address1": "TestUpdated",
+    "address2": "TestUpdated",
+    "country": "TestUpdated",
+    "city": "TestUpdated",  
+    "state": "TestUpdated",
+    "zip_code": "606202"
+  },
+  "Agent": [
+    "Geekey", 
+    "Agent663",
+    "test agent latest"
+  ]
+}

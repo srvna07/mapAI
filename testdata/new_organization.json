@@ -1,0 +1,17 @@
+{
+  "organization": {
+    "name": "test_org"
+  },
+  "contact": {
+    "address1": "Test",
+    "address2": "Test",
+    "country": "Test",
+    "city": "Test",
+    "state": "Test",
+    "zip_code": "606201"
+  },
+  "Agent": [
+    "Geekey",
+    "Apogee"
+  ]
+}

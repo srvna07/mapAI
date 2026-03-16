@@ -45,3 +45,7 @@ class DataFactory:
         # Ensures password contains letters, digits, and punctuation
         chars = string.ascii_letters + string.digits + "!@#$%^&*"
         return "".join(random.choices(chars, k=length))
+    
+    @staticmethod
+    def generate_org_name(prefix="test_org"):
+        return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
