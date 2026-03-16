@@ -97,26 +97,4 @@ def users_page(page):
     return users_page_obj
 
 
-@pytest.fixture
-def test_data():
-    # Load your static JSON file
-    path = os.path.join(os.path.dirname(__file__), "testdata/users_page_test_data.json")
-    with open(path) as f:
-        data = json.load(f)
 
-    # Setup Data for "Create"
-    user = data["users"]
-    user["first_name"] = DataFactory.generate_first_name()
-    user["last_name"]  = DataFactory.generate_last_name()
-    user["email"]      = DataFactory.random_email()
-    user["phone"]      = DataFactory.generate_phone()
-    user["password"]   = DataFactory.generate_password()
-
-    # Setup Data for "Edit"
-    edited = data["edited_users"]
-    edited["first_name"] = DataFactory.generate_first_name(prefix="Edited")
-    edited["last_name"]  = DataFactory.generate_last_name(prefix="Edited")
-    user["email"]      = DataFactory.random_email(prefix="Edited")
-    edited["phone"]      = DataFactory.generate_phone()
-
-    return data

@@ -14,17 +14,17 @@ class UsersPage(BasePage):
         self.search_bar = page.get_by_role("textbox", name="Search by Name")
         self.add_user_button = page.get_by_role("button", name="Add User")
 
+        #table locators
+        self.table_row = page.get_by_role("row")
+
         #add user form
         self.first_name_textbox = page.get_by_role("textbox", name="First Name")
         self.last_name_testbox = page.get_by_role("textbox", name="Last Name")
         self.email_textbox = page.get_by_role("textbox", name="Email")
         self.phone_number_textbox = page.get_by_role("textbox", name="Phone Number")
         self.role_combobox = page.get_by_role("combobox", name="Role")
-        self.role_option = self.role_combobox.get_by_role("option")
         self.organization_combobox = page.get_by_role("combobox", name="Organization")
-        self.organization_option = self.organization_combobox.get_by_role("option")
         self.agent_combobox = page.get_by_role("combobox", name="Agent")
-        self.agent_option = self.agent_combobox.get_by_role("option")
         self.password_textbox = page.get_by_role("textbox", name="Password")
         self.save_button = page.get_by_role("button", name="Save")
         self.cancel_button = page.get_by_role("button", name="Cancel")
@@ -42,6 +42,13 @@ class UsersPage(BasePage):
         self.rows_per_page_menu = page.get_by_role("combobox", name="Rows per page:")
         self.rows_per_page_option = self.rows_per_page_menu.get_by_role("option")
 
+        #close button
+        self.close_button = page.get_by_role("button", name="close")
+
+        #pop ups
+        self.pop_ups = page.get_by_text("message")
+        
+
     # Actions
     def navigate_to_users_page(self):
         self.menu.click()
@@ -51,7 +58,7 @@ class UsersPage(BasePage):
         self.search_bar.click()
         self.search_bar.fill(user_name)
 
-    def click_add_user_buttom(self):
+    def click_add_user_button(self):
         self.add_user_button.click()
 
     def click_edit_button(self):
@@ -77,15 +84,15 @@ class UsersPage(BasePage):
 
     def select_role(self, role_name):
         self.role_combobox.click()
-        self.role_option.filter(has_text=role_name).click()
+        self.page.get_by_role("option", name=role_name, exact=True).click()
 
     def select_organization(self, organization_name):
         self.organization_combobox.click()
-        self.organization_option.filter(has_text=organization_name).click()
+        self.page.get_by_role("option", name=organization_name, exact=True).click()
 
     def select_agent(self, agent_name):
         self.agent_combobox.click()
-        self.agent_option.filter(has_text=agent_name).click()
+        self.page.get_by_role("option", name=agent_name, exact=True).click()
 
     def fill_password_textbox(self, password):
         self.password_textbox.fill(password)
@@ -109,14 +116,11 @@ class UsersPage(BasePage):
         self.rows_per_page_menu.click()
         self.rows_per_page_option.filter(has_text=row_count).click()
 
+    def pop_up_message(self, message):
+        self.pop_up_message(message)
 
+    def click_close_button(self):
+        self.close_button.click()
 
-    
-
-
-
-        
-
-
-
-        
+    def is_text_in_table_visible(self, email: str) -> bool:
+        return self.table_row.filter(has_text=email).is_visible()    

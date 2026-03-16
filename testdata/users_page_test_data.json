@@ -4,7 +4,7 @@
       "last_name": "creted_last_name",
       "email": "john.doe@example.com",
       "phone": "1234567890",
-      "role": "Super Admin",
+      "super_admin_role": "Super Admin",
       "organization": "TestOrg2",
       "agent": "Geekey",
       "password": "SecurePassword123!"
