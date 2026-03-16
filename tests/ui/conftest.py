@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 from datetime import datetime
 from playwright.sync_api import Page, Browser
-
+from utils.api_client import APIClient
 from utils.env_loader import get_env
 from utils.data_reader import DataReader
 from pages.login_page import LoginPage
@@ -95,13 +95,19 @@ def pytest_runtest_makereport(item, call):
 def organization_page(page):
     return OrganizationsPage(page)
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def new_organization_data():
     data = DataReader.load_yaml("testdata/new_organization.yaml")
     data["organization"]["name"]   = DataFactory.generate_org_name()
     return data
 
+@pytest.fixture(scope="session")
 def update_organization_data():
-    data = DataReader.load_json("testdata/update_org.json")
-    data["updated_basic"]["name"] = DataFactory.generate_org_name()
-    return data
+    return DataReader.load_json("testdata/update_org.json")
+    
+@pytest.fixture
+def api_client(authenticated_page) -> APIClient:
+    client = APIClient(base_url=config["api_url"])
+    token = authenticated_page.evaluate("localStorage.getItem('accessToken')")
+    client.set_token(token)
+    return client

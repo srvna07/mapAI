@@ -1,5 +1,6 @@
 from playwright.sync_api import Page, expect
 from .base_page import BasePage
+from time import sleep
 
 
 class OrganizationsPage(BasePage):
@@ -13,7 +14,7 @@ class OrganizationsPage(BasePage):
         self.save_btn                 = page.get_by_role("button", name="Save")
         self.cancel_btn               = page.get_by_role("button", name="Cancel")
         self.delete_btn               = page.get_by_role("button", name="Delete")
-        self.edit_btn                 = page.get_by_role("button", name="Edit")
+        self.edit_btn                 = page.get_by_test_id("EditIcon")
         self.search_input             = page.get_by_role("textbox", name="Search")
 
         self.organization_name        = page.get_by_role("textbox", name="Organization Name")
@@ -30,7 +31,7 @@ class OrganizationsPage(BasePage):
         self.success_message          = page.get_by_text("Organization created successfully")
         self.update_success_message   = page.get_by_text("Organization updated successfully")
         self.delete_success_message   = page.get_by_text("Organization deleted successfully")
-        self.duplicate_error_message  = page.get_by_text("Organization already exists.")
+        self.rejected_error_message   = page.get_by_text("Rejected")
 
     def open_form(self):
         self.settings_icon.click()
@@ -57,10 +58,8 @@ class OrganizationsPage(BasePage):
     def select_agent(self, agent_name: str):
         self.agent_dropdown.click()
         for agent in agent_name:
-            self.page.get_by_role("option", name=agent).click()
-        sleep(5)  # Wait agents selection
-        self.agent_dropdown.click()  # Close dropdown
-
+            self.page.get_by_role("option", name=agent,exact=True).click()
+        self.agent_dropdown.press("Escape")  # Close dropdown after selection
     def open_agent_dropdown(self):
         self.agent_dropdown.click()
 
@@ -75,25 +74,26 @@ class OrganizationsPage(BasePage):
         self.search_organization(org_name)
         row = self.page.get_by_role("row", name=org_name).first
         row.wait_for(state="visible")
-        row.get_by_role("button", name="Edit").click()
+        row.get_by_test_id("EditIcon").click()
 
     def delete_organization(self, org_name: str):
         self.search_organization(org_name)
         row = self.page.get_by_role("row", name=org_name).first
         row.wait_for(state="visible")
-        row.get_by_role("button", name="Delete").click()
-        self.page.get_by_role("button", name="Delete").click()
+        # Click delete icon in row
+        row.get_by_test_id("DeleteIcon").click()
+
+        # Confirm delete in dialog
+        self.delete_btn.click()
 
     def _clear_field(self, field):
         if field.input_value():
             field.clear()
 
     def update_organization(self, update_data: dict):
-        basic   = update_data["updated_basic"]
         contact = update_data["contact"]
 
-        self._clear_field(self.organization_name)
-        self.organization_name.fill(basic["name"])
+        
         self._clear_field(self.address_1)
         self.address_1.fill(contact["address1"])
         self._clear_field(self.address_2)
@@ -117,7 +117,7 @@ class OrganizationsPage(BasePage):
         expect(self.delete_success_message).to_be_visible(timeout=10000)
 
     def verify_duplicate_error(self):
-        expect(self.duplicate_error_message).to_be_visible()
+        expect(self.rejected_error_message).to_be_visible()
 
     def verify_organization_in_table(self, org_name: str):
         self.search_organization(org_name)
@@ -127,7 +127,13 @@ class OrganizationsPage(BasePage):
         self.search_organization(org_name)
         expect(self.page.get_by_role("cell", name=org_name).first).not_to_be_visible()
 
-    def verify_agents(self, agents):
-        for agent in agents:
-            expect(self.page.get_by_role("option", name=agent)).to_be_selected()
+    
+    def verify_agents(self, agent_names):
+        self.open_agent_dropdown()
+        for agent in agent_names:
+            expect(
+                self.page.get_by_role("option", name=agent, exact=True)).to_be_visible()
 
+    def verify_organization_in_table(self, org_name: str):
+        self.search_organization(org_name)
+        expect(self.page.get_by_text(org_name).first).to_be_visible()

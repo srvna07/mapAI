@@ -16,15 +16,16 @@ def test_create_organization(authenticated_page, organization_page, new_organiza
     page.submit_form()
 
     page.verify_success()
+    page.verify_organization_in_table(org["name"])
 
 def test_duplicate_organization(authenticated_page, organization_page, new_organization_data):
     page = organization_page
-    org = new_organization_data["organization"]
+    org = new_organization_data["organization"]["name"]
     contact = new_organization_data["contact"]
 
     # Create first organization
     page.open_form()
-    page.fill_basic_info(org["name"])
+    page.fill_basic_info(org)
     page.fill_contact_info(**contact)
     page.select_agent(new_organization_data["Agent"])
     page.submit_form()
@@ -51,21 +52,20 @@ def test_search_organization(authenticated_page, organization_page, new_organiza
     page.verify_organization_in_table(org["name"])
 
 
-def test_edit_organization(authenticated_page, organization_page, update_organization_data):
+def test_edit_organization(authenticated_page, organization_page, new_organization_data, update_organization_data):
     page = organization_page
-    org     = update_organization_data["organization"]
-    contact = update_organization_data["contact"]
-
+    org     = new_organization_data["organization"]["name"]
+    
     page.navigate_to_organizations()
-    page.edit_organization(org["name"])
+    page.edit_organization(org)
     page.update_organization(update_organization_data)
     page.select_agent(update_organization_data["Agent"]) #// Re-select same agents to remove and adding another agent#//
     page.submit_form()
     page.verify_update_success()
 
-def test_delete_organization(authenticated_page, organization_page, update_organization_data):
+def test_delete_organization(authenticated_page, organization_page, new_organization_data):
     page = organization_page
-    org = update_organization_data["organization"]
+    org = new_organization_data["organization"]
 
     page.navigate_to_organizations()
     page.delete_organization(org["name"])
@@ -73,7 +73,7 @@ def test_delete_organization(authenticated_page, organization_page, update_organ
 
 
 @pytest.mark.smoke
-def test_verify_all_agents_listed_in_dropdown(authenticated_page, organization_page, api_client: APIClient):
+def test_verify_all_agents_listed_in_dropdown(authenticated_page, organization_page, api_client):
 
     page = organization_page
 
@@ -82,12 +82,10 @@ def test_verify_all_agents_listed_in_dropdown(authenticated_page, organization_p
     assert response.status_code == 200
 
     agents_api = response.json()
-    agent_names = [agent["name"] for agent in agents_api["data"]]
+    agent_names = [agent["name"] for agent in agents_api]
 
     page.navigate_to_organizations()
     page.open_form()
-    page.open_agent_dropdown()
-
     page.verify_agents(agent_names)
     
     
