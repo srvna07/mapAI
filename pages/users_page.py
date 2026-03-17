@@ -1,5 +1,6 @@
 import pytest
 from pages.base_page import BasePage
+from playwright.sync_api import expect
 
 class UsersPage(BasePage):
     # Locators
@@ -30,7 +31,7 @@ class UsersPage(BasePage):
         self.cancel_button = page.get_by_role("button", name="Cancel")
 
         #edit user
-        self.edit_user_button = page.get_by_role("button", name="Edit")
+        self.edit_user_button = page.get_by_test_id("EditIcon")
 
         #delete suer 
         self.delete_user_button = page.get_by_role("button", name="Delete")
@@ -47,6 +48,9 @@ class UsersPage(BasePage):
 
         #pop ups
         self.pop_ups = page.get_by_text("message")
+
+        # Search and found no data
+        self.verify_search_data_available = page.get_by_text("No data available")
         
 
     # Actions
@@ -93,6 +97,7 @@ class UsersPage(BasePage):
     def select_agent(self, agent_name):
         self.agent_combobox.click()
         self.page.get_by_role("option", name=agent_name, exact=True).click()
+        self.agent_combobox.press("Escape")
 
     def fill_password_textbox(self, password):
         self.password_textbox.fill(password)
@@ -122,5 +127,5 @@ class UsersPage(BasePage):
     def click_close_button(self):
         self.close_button.click()
 
-    def is_text_in_table_visible(self, email: str) -> bool:
-        return self.table_row.filter(has_text=email).is_visible()    
+    def verify_table_is_empty(self):
+        expect(self.verify_search_data_available).to_be_visible()

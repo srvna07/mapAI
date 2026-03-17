@@ -1,9 +1,11 @@
+import json
+import os
 import pytest
 from pathlib import Path
 from datetime import datetime
 from playwright.sync_api import Page, Browser
-
 from utils.env_loader import get_env
+from utils.api_client import APIClient
 from utils.data_reader import DataReader
 from utils.data_factory import DataFactory
 from pages.login_page import LoginPage
@@ -94,17 +96,47 @@ def pytest_runtest_makereport(item, call):
             pg.screenshot(path=str(screenshots_dir / f"{item.name}_{timestamp}.png"), full_page=True)
 
 
-
 # Users page fixture
 @pytest.fixture
 def users_page(page):
     users_page_obj = UsersPage(page)
     return users_page_obj
 
+@pytest.fixture(scope = "session")
+def users_test_data():
+    # Load your static JSON file
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(current_dir, "..", "..", "testdata", "users_page_test_data.json")
+    with open(path) as f:
+        data = json.load(f)
+
+    # Setup Data for Organization Creation
+    organization = data["organization"]
+    organization["name"] = DataFactory.generate_org_name()
+
+    # Setup another organization for test
+    another_organization = data["another_organization"]
+    another_organization["name"] = DataFactory.generate_org_name(prefix = "test_another_org_")
+
+    # Setup Data for "Create"
+    user = data["users"]
+    user["first_name"] = DataFactory.generate_first_name()
+    user["last_name"]  = DataFactory.generate_last_name()
+    user["email"]      = DataFactory.random_email()
+    user["phone"]      = DataFactory.generate_phone()
+    user["password"]   = DataFactory.generate_password()
+
+    # Setup Data for "Edit"
+    edited = data["edited_users"]
+    edited["first_name"] = DataFactory.generate_first_name(prefix="Edited")
+    edited["last_name"]  = DataFactory.generate_last_name(prefix="Edited")
+    edited["email"]      = DataFactory.random_email(prefix="Edited")
+    edited["phone"]      = DataFactory.generate_phone()
+
+    return data
 
 
-
-
+# Organization page fixture
 @pytest.fixture
 def organization_page(page):
     return OrganizationsPage(page)

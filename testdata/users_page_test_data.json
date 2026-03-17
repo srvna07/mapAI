@@ -1,14 +1,42 @@
 {
+  "organization":{
+    "name": "organization_name",
+    "address1": "Test",
+    "address2": "Test",
+    "country": "Test",
+    "city": "Test",
+    "state": "Test",
+    "zip_code": "606201"
+  },
+
+   "another_organization":{
+    "name": "organization_name",
+    "address1": "Test",
+    "address2": "Test",
+    "country": "Test",
+    "city": "Test",
+    "state": "Test",
+    "zip_code": "606201"
+
+  },
+
+  "agent": [
+    "Geekey",
+    "Apogee"
+  ],
+
   "users": {
       "first_name": "created_first_name",
       "last_name": "creted_last_name",
       "email": "john.doe@example.com",
       "phone": "1234567890",
       "super_admin_role": "Super Admin",
+      "admin_role": "Admin",
       "organization": "TestOrg2",
       "agent": "Geekey",
       "password": "SecurePassword123!"
     },
+
   "edited_users": {
       "first_name": "edited_first_name",
       "last_name": "edited_last_name",

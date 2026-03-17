@@ -7,7 +7,8 @@ pre_suite = [
 
 parallel_suite = [
     "tests/ui/test_login.py",
-    "tests/ui/test_organization.py"
+    "tests/ui/test_organization.py",
+    "tests/ui/test_users.py"
 ]
 
 post_suite = []
