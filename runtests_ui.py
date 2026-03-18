@@ -10,7 +10,9 @@ parallel_suite = [
     "tests/ui/test_organization.py"
 ]
 
-post_suite = []
+post_suite = [
+    "tests/ui/test_get_data_ids_delete.py"
+]
 
 
 def main():
@@ -26,10 +28,10 @@ def main():
     if exit_code != 0:
         sys.exit(exit_code)
 
-    # if post_suite:
-    #     print("\n[Phase 3] cleanup...")
-    #     exit_code = pytest.main(["-v", *cli_args, *post_suite])
-    # sys.exit(exit_code)
+    if post_suite:
+        print("\n[Phase 3] cleanup...")
+        exit_code = pytest.main(["-v", *cli_args, *post_suite])
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":
