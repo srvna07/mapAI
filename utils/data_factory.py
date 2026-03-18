@@ -14,7 +14,7 @@ class DataFactory:
         return prefix + DataFactory.random_string()
 
     @staticmethod
-    def random_email(prefix: str = "test_user_", domain: str = "@example.com") -> str:
+    def random_email(prefix: str = "test_user_", domain: str = "@gmail.com") -> str:
         return prefix + DataFactory.random_string() + domain
 
     @staticmethod
@@ -22,15 +22,15 @@ class DataFactory:
         return prefix + DataFactory.random_string()
 
     @staticmethod
-    def timestamped_name(prefix: str = "test") -> str:
+    def timestamped_name(prefix: str = "test_") -> str:
         return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
     @staticmethod
-    def generate_first_name(prefix: str = "User") -> str:
+    def generate_first_name(prefix: str = "test_user") -> str:
         return f"{prefix}_{DataFactory.random_string()}"
     
     @staticmethod
-    def generate_last_name(prefix: str = "Test") -> str:
+    def generate_last_name(prefix: str = "test_") -> str:
         return f"{prefix}_{DataFactory.random_string()}"
     
     @staticmethod
@@ -43,7 +43,7 @@ class DataFactory:
     @staticmethod
     def generate_password(length: int = 8) -> str:
         # Ensures password contains letters, digits, and punctuation
-        chars = string.ascii_letters + string.digits + "!@#$%^&*"
+        chars = string.ascii_letters + string.digits + "!@#$%^&*A"
         return "".join(random.choices(chars, k=length))
     
     @staticmethod

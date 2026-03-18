@@ -31,10 +31,11 @@ class UsersPage(BasePage):
         self.cancel_button = page.get_by_role("button", name="Cancel")
 
         #edit user
-        self.edit_user_button = page.get_by_test_id("EditIcon")
+        self.edit_user_button = page.get_by_role("button").nth(1)
+        self.edit_user_confirmation_button = page.get_by_role("button", name="Yes, Proceed")
 
         #delete suer 
-        self.delete_user_button = page.get_by_role("button", name="Delete")
+        self.delete_user_button = page.get_by_role("button").nth(2)
         self.delete_user_confirmation_button = page.get_by_role("button", name="Delete")
 
         #pagination
@@ -45,9 +46,6 @@ class UsersPage(BasePage):
 
         #close button
         self.close_button = page.get_by_role("button", name="close")
-
-        #pop ups
-        self.pop_ups = page.get_by_text("message")
 
         # Search and found no data
         self.verify_search_data_available = page.get_by_text("No data available")
@@ -67,6 +65,9 @@ class UsersPage(BasePage):
 
     def click_edit_button(self):
         self.edit_user_button.click()
+
+    def click_edit_user_confirmation_button(self):
+        self.edit_user_confirmation_button.click()
 
     def click_delete_user_button(self):
         self.delete_user_button.click()
@@ -97,7 +98,8 @@ class UsersPage(BasePage):
     def select_agent(self, agent_name):
         self.agent_combobox.click()
         self.page.get_by_role("option", name=agent_name, exact=True).click()
-        self.agent_combobox.press("Escape")
+        # self.page.wait_for_timeout(700)
+        self.page.keyboard.press("Escape")
 
     def fill_password_textbox(self, password):
         self.password_textbox.fill(password)
@@ -121,11 +123,14 @@ class UsersPage(BasePage):
         self.rows_per_page_menu.click()
         self.rows_per_page_option.filter(has_text=row_count).click()
 
-    def pop_up_message(self, message):
-        self.pop_up_message(message)
+    def get_toast_message(self, message: str):
+        return self.page.get_by_text(message)
 
     def click_close_button(self):
         self.close_button.click()
 
     def verify_table_is_empty(self):
         expect(self.verify_search_data_available).to_be_visible()
+
+    def verify_search_item_in_table(self, search_item_name: str):
+        expect(self.page.get_by_text(search_item_name).first).to_be_visible()

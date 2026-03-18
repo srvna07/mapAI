@@ -56,5 +56,13 @@
         "default_rows": "5",
         "expanded_rows": "10",
         "max_rows": "25"
+    },
+
+    "toast_messages":{
+        "user_created": "User Created Successfully",
+        "user_edited": "User Updated Successfully",
+        "user_deleted": "User Deleted Successfully",
+        "error_creating_user": "Error: Failed to create user"
     }
+
 }
