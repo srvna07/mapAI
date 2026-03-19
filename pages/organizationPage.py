@@ -137,3 +137,6 @@ class OrganizationsPage(BasePage):
     def verify_organization_in_table(self, org_name: str):
         self.search_organization(org_name)
         expect(self.page.get_by_text(org_name).first).to_be_visible()
+
+    def verify_organization_page_loaded(self):
+        expect(self.page.get_by_text("Organizations", exact=True)).to_be_visible()
