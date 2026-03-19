@@ -17,7 +17,6 @@
     "city": "Test",
     "state": "Test",
     "zip_code": "606201"
-
   },
 
   "agent": [
@@ -55,7 +54,7 @@
     "pagination": {
         "default_rows": "5",
         "expanded_rows": "10",
-        "max_rows": "25"
+        "max_rows": "20"
     },
 
     "toast_messages":{

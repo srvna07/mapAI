@@ -43,12 +43,13 @@ class UsersPage(BasePage):
         self.go_to_previous_page = page.get_by_role("button", name="Go to previous page")
         self.rows_per_page_menu = page.get_by_role("combobox", name="Rows per page:")
         self.rows_per_page_option = self.rows_per_page_menu.get_by_role("option")
+        self.pagination_label = page.locator(".MuiTablePagination-displayedRows")
 
         #close button
         self.close_button = page.get_by_role("button", name="close")
 
         # Search and found no data
-        self.verify_search_data_available = page.get_by_text("No data available")
+        self.verify_search_data_not_available = page.get_by_text("No data available")
         
 
     # Actions
@@ -114,14 +115,20 @@ class UsersPage(BasePage):
         self.delete_user_button.click()
 
     def click_go_to_next_page(self):
+        old_text = self.pagination_label.inner_text()
+        expect(self.go_to_next_page).to_be_enabled()
         self.go_to_next_page.click()
+        expect(self.pagination_label).not_to_have_text(old_text, timeout=5000)
 
     def click_go_to_previous_page(self):
+        old_text = self.pagination_label.inner_text()
+        expect(self.go_to_previous_page).to_be_enabled()
         self.go_to_previous_page.click()
+        expect(self.pagination_label).not_to_have_text(old_text, timeout=5000)
 
     def select_rows_per_page(self, row_count):
         self.rows_per_page_menu.click()
-        self.rows_per_page_option.filter(has_text=row_count).click()
+        self.page.get_by_role("option", name=str(row_count)).click()
 
     def get_toast_message(self, message: str):
         return self.page.get_by_text(message)
@@ -130,7 +137,19 @@ class UsersPage(BasePage):
         self.close_button.click()
 
     def verify_table_is_empty(self):
-        expect(self.verify_search_data_available).to_be_visible()
+        expect(self.verify_search_data_not_available).to_be_visible()
 
     def verify_search_item_in_table(self, search_item_name: str):
         expect(self.page.get_by_text(search_item_name).first).to_be_visible()
+
+    def get_table_row_count(self):
+        return self.page.locator("tbody tr").count()
+    
+    def verify_pagination_limit(self, expected_limit):
+        self.page.locator("tbody tr").first.wait_for(state="visible", timeout=5000)
+        self.page.wait_for_timeout(500) 
+        actual_rows = self.get_table_row_count()
+        assert actual_rows <= int(expected_limit), f"Table showing {actual_rows} rows, exceeding limit of {expected_limit}"
+
+    def verify_page_label_contains(self, text):
+        expect(self.pagination_label).to_contain_text(text)
