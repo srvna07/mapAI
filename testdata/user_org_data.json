@@ -1,0 +1,75 @@
+{
+  "org_with_agents": {
+    "organization": {
+      "name": "test_Auto_Org_1"
+    },
+    "contact": {
+      "address1": "Test",
+      "address2": "Test",
+      "country": "India",
+      "city": "Chennai",
+      "state": "TN",
+      "zip_code": "600001"
+    },
+    "agents": [
+      "Geekey",
+      "Apogee"
+    ]
+  },
+
+  "org_add_agent": {
+    "agents": [
+      "QuoteBot"
+    ]
+  },
+
+  "org_remove_agent": {
+    "agents": [
+      "Geekey"
+    ]
+  },
+
+  "org_no_agents": {
+    "organization": {
+      "name": "test_Auto_Org_No_Agent"
+    },
+    "contact": {
+      "address1": "Test",
+      "address2": "Test",
+      "country": "India",
+      "city": "Chennai",
+      "state": "TN",
+      "zip_code": "600002"
+    },
+    "agents": []
+  },
+
+  "org_delete": {
+    "organization": {
+      "name": "test_Auto_Delete_Org"
+    },
+    "contact": {
+      "address1": "Test",
+      "address2": "Test",
+      "country": "India",
+      "city": "Chennai",
+      "state": "TN",
+      "zip_code": "600002"
+    },
+    "agents": []
+  },
+
+  "org_switch": {
+    "org1": "test_Auto_Org_1",
+    "org2": "test_Auto_Org_No_Agent"
+  },
+
+  "user_data": {
+    "first_name": "test_Auto",
+    "last_name": "User",
+    "email": "autouser@test.com",
+    "phone": "9999999999",
+    "role": "Admin",
+    "password": "Password123"
+  }
+}
