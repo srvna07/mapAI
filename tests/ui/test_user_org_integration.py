@@ -204,7 +204,7 @@ def test_deleted_org_not_visible(authenticated_page):
     assert not page.get_by_role("option", name=org_name).is_visible() 
     page.keyboard.press("Escape")
 # ---------------------------------------
-# 8. User edit → org change refresh agents
+# 7. User edit → org change refresh agents
 # ---------------------------------------
 def test_user_edit_org_change_refresh(authenticated_page):
     page = authenticated_page
