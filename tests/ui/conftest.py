@@ -29,22 +29,23 @@ def apply_timeouts(pg):
 
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args):
-    return {**browser_type_launch_args, "args": ["--start-maximized"]}
+    #return {**browser_type_launch_args, "args": ["--start-maximized"]}
 
+    return {
+        **browser_type_launch_args,
+        "args": ["--start-maximized"]
+    }
+    
 
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args):
     args = {
         **browser_context_args,
         "no_viewport": True,
-        "record_video_size": config.get(
-            "record_video_size", {"width": 1280, "height": 720}
-        ),
+        "record_video_size": config.get("record_video_size", {"width": 1280, "height": 720}),
     }
-
     if AUTH_STATE_FILE.exists():
         args["storage_state"] = str(AUTH_STATE_FILE)
-
     return args
 
 
@@ -65,42 +66,32 @@ def credentials():
 def setup_auth(browser: Browser, credentials):
     AUTH_STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
 
-    context = browser.new_context(no_viewport=True)
-    pg = context.new_page()
+    if AUTH_STATE_FILE.exists():
+        return  
 
-    apply_timeouts(pg)
+    context = browser.new_context(viewport=None)
+    page = context.new_page()
 
-    login = LoginPage(pg)
+    apply_timeouts(page)
+
+    login = LoginPage(page)
     login.navigate()
     login.login(credentials["username"], credentials["password"])
 
-    pg.wait_for_function(
+    page.wait_for_function(
         "() => { const auth = localStorage.getItem('persist:root'); if (!auth) return false; const parsed = JSON.parse(JSON.parse(auth).auth); return parsed.data !== null; }"
     )
 
     context.storage_state(path=str(AUTH_STATE_FILE))
+
     context.close()
 
 
-
-# @pytest.fixture
-# def authenticated_page(page: Page):
-#     apply_timeouts(page)
-#     page.goto(config["base_url"])
-#     return page
-@pytest.fixture(scope="session")
-def authenticated_page(browser: Browser):
-    context = browser.new_context(
-        storage_state=str(AUTH_STATE_FILE)
-    )
-    page = context.new_page()
-
+@pytest.fixture
+def authenticated_page(page: Page):
     apply_timeouts(page)
     page.goto(config["base_url"])
-
-    yield page
-
-    context.close()
+    return page
 
 
 @pytest.fixture
