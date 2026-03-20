@@ -1,0 +1,18 @@
+{
+  "user": {
+    "email": "abc@gmail.com",
+    "firstName": "TestFirstName",
+    "lastName": "TestLastName",
+    "password": "Test@123",
+    "phoneNumber": "1234567890",
+    "role_id":"38ea421b-abde-4ac0-becc-330fe8eb240f",
+    "organization_id": "61d5bc20-88ff-4a40-bd71-1d6bffad7571"
+    
+  },
+  "role": {
+      "name": "Super Admin"
+    },
+"invalid_data": {
+    "user_id": "12345678-90ab-xcvbniopu-1234-567890abcdef"
+  }
+}

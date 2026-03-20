@@ -5,6 +5,7 @@ from utils.env_loader import get_env
 import requests
 import os
 from utils.data_factory import DataFactory
+import uuid
 
 ENV = get_env()
 config = DataReader.load_json(f"configs/{ENV}.json")
@@ -35,8 +36,33 @@ def api_client() -> APIClient:
 
     return client
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def new_organization_data():
-    data = DataReader.load_yaml("testdata/new_organization.yaml")
+    data = DataReader.load_json("testdata/new_organization.json")
     data["organization"]["name"] = DataFactory.generate_org_name()
     return data
+
+@pytest.fixture(scope="function")
+def invalid_organization_data():
+    return DataReader.load_json("testdata/new_organization.json")
+
+
+@pytest.fixture(scope="function")
+def user_test_data():
+    return DataReader.load_json("testdata/new_user.json")
+
+@pytest.fixture(scope="function")
+def new_user_data():
+    data = DataReader.load_json("testdata/new_user.json")
+
+    data["user"]["email"] = DataFactory.random_email()
+    data["user"]["firstName"] = DataFactory.random_name()
+    data["user"]["lastName"] = DataFactory.random_name()
+
+    return data
+
+
+
+
+
+
