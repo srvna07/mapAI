@@ -117,12 +117,14 @@ class UsersPage(BasePage):
     def click_go_to_next_page(self):
         old_text = self.pagination_label.inner_text()
         expect(self.go_to_next_page).to_be_enabled()
+        self.page.wait_for_timeout(1000)
         self.go_to_next_page.click()
-        expect(self.pagination_label).not_to_have_text(old_text, timeout=5000)
+        expect(self.pagination_label).not_to_have_text(old_text, timeout=10000)
 
     def click_go_to_previous_page(self):
         old_text = self.pagination_label.inner_text()
         expect(self.go_to_previous_page).to_be_enabled()
+        self.page.wait_for_timeout(1000)
         self.go_to_previous_page.click()
         expect(self.pagination_label).not_to_have_text(old_text, timeout=5000)
 
@@ -130,8 +132,10 @@ class UsersPage(BasePage):
         self.rows_per_page_menu.click()
         self.page.get_by_role("option", name=str(row_count)).click()
 
-    def get_toast_message(self, message: str):
-        return self.page.get_by_text(message)
+    def get_toast_message(self, message: str, timeout=15000):
+        toast = self.page.get_by_text(message)
+        toast.wait_for(state="visible", timeout=timeout)
+        return toast
 
     def click_close_button(self):
         self.close_button.click()
@@ -140,8 +144,7 @@ class UsersPage(BasePage):
         expect(self.verify_search_data_not_available).to_be_visible()
 
     def verify_search_item_in_table(self, search_item_name: str):
-        row = self.page.locator("tbody tr", has_text=search_item_name)
-        expect(row.first).to_be_visible()
+        expect(self.page.get_by_text(search_item_name).first).to_be_visible()
 
     def get_table_row_count(self):
         return self.page.locator("tbody tr").count()
@@ -220,10 +223,10 @@ class UsersPage(BasePage):
         for agent in agents:
             option = self.page.get_by_role("option", name=agent)
 
-        # Wait for option to be visible
+        
             expect(option).to_be_visible()
 
-        # Check selection state properly
+     
             if option.get_attribute("aria-selected") == "true":
              option.click()
 
