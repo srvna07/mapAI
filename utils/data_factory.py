@@ -1,6 +1,8 @@
 import random
 import string
 from datetime import datetime
+import uuid
+import requests
 
 
 class DataFactory:
@@ -14,7 +16,7 @@ class DataFactory:
         return prefix + DataFactory.random_string()
 
     @staticmethod
-    def random_email(prefix: str = "test_user_", domain: str = "@example.com") -> str:
+    def random_email(prefix: str = "test_user_", domain: str = "@gmail.com") -> str:
         return prefix + DataFactory.random_string() + domain
 
     @staticmethod
@@ -24,3 +26,39 @@ class DataFactory:
     @staticmethod
     def timestamped_name(prefix: str = "test") -> str:
         return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    @staticmethod
+    def generate_org_name(prefix="test_org"):
+        return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{DataFactory.random_string(4)}"
+
+    @staticmethod
+    def generate_invalid_uuid():
+        return str(uuid.uuid4())
+
+    @staticmethod
+    def organization(data):
+        return {
+            "organizationName": data["organization"]["name"],
+            "org_logo": "string",
+            "addressline_1": data["contact"]["address1"],
+            "addressline_2": data["contact"]["address2"],
+            "state": data["contact"]["state"],
+            "city": data["contact"]["city"],
+            "country": data["contact"]["country"],
+            "zipcode": data["contact"]["zip_code"]
+        }
+
+    @staticmethod
+    def user(data):
+        return {
+            "email": data["user"]["email"],
+            "password": data["user"]["password"],        # mandatory
+            "firstName": data["user"]["firstName"],
+            "lastName": data["user"]["lastName"],
+            "phoneNumber": data["user"]["phoneNumber"], 
+            "organization_id": data["user"]["organization_id"],           
+            "roleId": data["user"]["role_id"],
+            "isActive": True
+        }
+
+    

@@ -1,7 +1,8 @@
 {
-  "base_url": "https://mapaidev.signatech.com",
-  "api_url": "https://api.dev.your-app.com",
+  "base_url": "https://mapaidev.signatech.com/",
+  "api_url": "https://mapaiapidev.signatech.com",
   "browser": "chromium",
+  "headless": "false",
   "default_timeout": 30000,
   "navigation_timeout": 45000,
   "record_video_size": {

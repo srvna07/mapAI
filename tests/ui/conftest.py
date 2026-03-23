@@ -2,10 +2,13 @@ import pytest
 from pathlib import Path
 from datetime import datetime
 from playwright.sync_api import Page, Browser
-
+from utils.api_client import APIClient
 from utils.env_loader import get_env
 from utils.data_reader import DataReader
 from pages.login_page import LoginPage
+from pages.organizationPage import OrganizationsPage
+from utils.data_factory import DataFactory
+
 
 ENV = get_env()
 config = DataReader.load_json(f"configs/{ENV}.json")
@@ -20,7 +23,11 @@ def apply_timeouts(pg):
 
 @pytest.fixture(scope="session")
 def browser_type_launch_args(browser_type_launch_args):
-    return {**browser_type_launch_args, "args": ["--start-maximized"]}
+    return {
+        **browser_type_launch_args,
+        "headless": False,
+        "args": ["--start-maximized"]
+    }
 
 
 @pytest.fixture(scope="session")
@@ -83,3 +90,24 @@ def pytest_runtest_makereport(item, call):
             screenshots_dir.mkdir(exist_ok=True)
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             pg.screenshot(path=str(screenshots_dir / f"{item.name}_{timestamp}.png"), full_page=True)
+
+@pytest.fixture
+def organization_page(page):
+    return OrganizationsPage(page)
+
+@pytest.fixture(scope="session")
+def new_organization_data():
+    data = DataReader.load_yaml("testdata/new_organization.yaml")
+    data["organization"]["name"]   = DataFactory.generate_org_name()
+    return data
+
+@pytest.fixture(scope="session")
+def update_organization_data():
+    return DataReader.load_json("testdata/update_org.json")
+    
+@pytest.fixture
+def api_client(authenticated_page) -> APIClient:
+    client = APIClient(base_url=config["api_url"])
+    token = authenticated_page.evaluate("localStorage.getItem('accessToken')")
+    client.set_token(token)
+    return client

@@ -4,7 +4,10 @@ import pytest
 pre_suite = []
 
 parallel_suite = [
-    # "tests/api/test_your_endpoint.py",
+    "tests/api/test_api_agents.py",
+    "tests/api/test_api_organization.py",
+    "tests/api/test_api_role.py",
+    "tests/api/test_api_user.py"
 ]
 
 post_suite = []
