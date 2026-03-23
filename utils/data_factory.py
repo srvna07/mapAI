@@ -16,7 +16,7 @@ class DataFactory:
         return prefix + DataFactory.random_string()
 
     @staticmethod
-    def random_email(prefix: str = "test_user_", domain: str = "@example.com") -> str:
+    def random_email(prefix: str = "test_user_", domain: str = "@gmail.com") -> str:
         return prefix + DataFactory.random_string() + domain
 
     @staticmethod
@@ -29,7 +29,7 @@ class DataFactory:
 
     @staticmethod
     def generate_org_name(prefix="test_org"):
-        return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{DataFactory.random_string(4)}"
 
     @staticmethod
     def generate_invalid_uuid():
