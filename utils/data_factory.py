@@ -24,9 +24,34 @@ class DataFactory:
         return prefix + DataFactory.random_string()
 
     @staticmethod
-    def timestamped_name(prefix: str = "test") -> str:
+    def timestamped_name(prefix: str = "test_") -> str:
         return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
+    @staticmethod
+    def generate_first_name(prefix: str = "test_user") -> str:
+        return f"{prefix}_{DataFactory.random_string()}"
+    
+    @staticmethod
+    def generate_last_name(prefix: str = "test_") -> str:
+        return f"{prefix}_{DataFactory.random_string()}"
+    
+    @staticmethod
+    def generate_phone() -> str:
+        # Generates a random 10-digit number starting with 7, 8, or 9
+        first_digit = random.choice("6789")
+        remaining = "".join(random.choices(string.digits, k=9))
+        return first_digit + remaining
+    
+    @staticmethod
+    def generate_password(length: int = 8) -> str:
+        # Ensures password contains letters, digits, and punctuation
+        chars = string.ascii_letters + string.digits + "!@#$%^&*A"
+        return "".join(random.choices(chars, k=length))
+    
+    @staticmethod
+    def generate_org_name(prefix: str ="test_org") -> str:
+        return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+    
     @staticmethod
     def generate_org_name(prefix="test_org"):
         return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{DataFactory.random_string(4)}"

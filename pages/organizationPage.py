@@ -28,7 +28,7 @@ class OrganizationsPage(BasePage):
 
         self.upload_button            = page.get_by_role("button", name="UPLOAD PROFILE PICTURE")
         
-        self.success_message          = page.get_by_text("Organization created successfully")
+        self.success_message          = page.get_by_text("Organization Created Successfully")
         self.update_success_message   = page.get_by_text("Organization updated successfully")
         self.delete_success_message   = page.get_by_text("Organization deleted successfully")
         self.rejected_error_message   = page.get_by_text("Rejected")
@@ -59,7 +59,8 @@ class OrganizationsPage(BasePage):
         self.agent_dropdown.click()
         for agent in agent_name:
             self.page.get_by_role("option", name=agent,exact=True).click()
-        self.agent_dropdown.press("Escape")  # Close dropdown after selection
+        self.agent_dropdown.press("Escape")
+        
     def open_agent_dropdown(self):
         self.agent_dropdown.click()
 

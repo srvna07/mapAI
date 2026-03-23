@@ -1,0 +1,67 @@
+{
+  "organization":{
+    "name": "organization_name",
+    "address1": "Test",
+    "address2": "Test",
+    "country": "Test",
+    "city": "Test",
+    "state": "Test",
+    "zip_code": "606201"
+  },
+
+   "another_organization":{
+    "name": "organization_name",
+    "address1": "Test",
+    "address2": "Test",
+    "country": "Test",
+    "city": "Test",
+    "state": "Test",
+    "zip_code": "606201"
+  },
+
+  "agent": [
+    "Geekey",
+    "Apogee"
+  ],
+
+  "users": {
+      "first_name": "created_first_name",
+      "last_name": "creted_last_name",
+      "email": "john.doe@example.com",
+      "phone": "1234567890",
+      "super_admin_role": "Super Admin",
+      "admin_role": "Admin",
+      "organization": "TestOrg2",
+      "agent": "Geekey",
+      "password": "SecurePassword123!"
+    },
+
+  "edited_users": {
+      "first_name": "edited_first_name",
+      "last_name": "edited_last_name",
+      "email": "john.doe@example.com",
+      "phone": "1234567890",
+      "role": "Admin",
+      "organization": "TestOrg2",
+      "agent": "Geekey",
+      "password": "SecurePassword123!"
+    },
+
+  "search_queries": {
+    "valid_user": "John",
+    "invalid_user": "NonExistentUser123"
+    },
+    "pagination": {
+        "default_rows": "5",
+        "expanded_rows": "10",
+        "max_rows": "20"
+    },
+
+    "toast_messages":{
+        "user_created": "User Created Successfully",
+        "user_edited": "User Updated Successfully",
+        "user_deleted": "User Deleted Successfully",
+        "error_creating_user": "Error: Failed to create user"
+    }
+
+}
