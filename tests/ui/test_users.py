@@ -188,5 +188,13 @@ def test_user_pagination_navigation(authenticated_page, users_page):
     users_page.verify_page_label_contains("1–")
     expect(users_page.go_to_previous_page).to_be_disabled()
 
+@pytest.mark.smoke
+def test_delete_created_organizations(authenticated_page, organization_page, users_test_data):
+    org_data = users_test_data["organization"]
+    another_org_data = users_test_data["another_organization"]
+
+    organization_page.navigate_to_organizations()
+    organization_page.delete_organization(org_data["name"])
+    organization_page.delete_organization(another_org_data["name"])
 
 
