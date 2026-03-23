@@ -82,6 +82,9 @@ def test_create_new_user(authenticated_page, users_page, users_test_data):
 
     expect(users_page.get_toast_message(toast_message["user_created"])).to_be_visible()
 
+    users_page.search_user(data["email"])
+    users_page.verify_search_item_in_table(data["email"])
+
 #2
 @pytest.mark.smoke
 def test_edit_created_user(authenticated_page, users_page, users_test_data):
@@ -106,6 +109,9 @@ def test_edit_created_user(authenticated_page, users_page, users_test_data):
     users_page.click_edit_user_confirmation_button()
 
     expect(users_page.get_toast_message(toast_message["user_edited"])).to_be_visible()
+
+    users_page.search_user(data["email"])
+    users_page.verify_search_item_in_table(data["email"])
 
 # 3
 def test_search_user(authenticated_page, users_page, users_test_data):

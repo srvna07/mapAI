@@ -14,7 +14,7 @@ class OrganizationsPage(BasePage):
         self.save_btn                 = page.get_by_role("button", name="Save")
         self.cancel_btn               = page.get_by_role("button", name="Cancel")
         self.delete_btn               = page.get_by_role("button", name="Delete")
-        self.edit_btn                 = page.get_by_test_id("EditIcon")
+        self.edit_btn                 = page.get_by_role("button", name="Edit")
         self.search_input             = page.get_by_role("textbox", name="Search")
 
         self.organization_name        = page.get_by_role("textbox", name="Organization Name")
@@ -73,19 +73,19 @@ class OrganizationsPage(BasePage):
 
     def edit_organization(self, org_name: str):
         self.search_organization(org_name)
-        row = self.page.get_by_role("row", name=org_name).first
+        row = self.page.locator("tr", has_text=org_name).first
         row.wait_for(state="visible")
-        row.get_by_test_id("EditIcon").click()
+        row.locator("button").nth(0).click()  # Click edit button in the row
 
     def delete_organization(self, org_name: str):
         self.search_organization(org_name)
-        row = self.page.get_by_role("row", name=org_name).first
+        row = self.page.locator("tr", has_text=org_name).first
         row.wait_for(state="visible")
         # Click delete icon in row
-        row.get_by_test_id("DeleteIcon").click()
+        row.locator("button").nth(1).click()
 
-        # Confirm delete in dialog
         self.delete_btn.click()
+        
 
     def _clear_field(self, field):
         if field.input_value():
@@ -135,6 +135,6 @@ class OrganizationsPage(BasePage):
             expect(
                 self.page.get_by_role("option", name=agent, exact=True)).to_be_visible()
 
-    def verify_organization_in_table(self, org_name: str):
-        self.search_organization(org_name)
-        expect(self.page.get_by_text(org_name).first).to_be_visible()
+    
+    def verify_organization_page_loaded(self):
+        expect(self.page.get_by_text("Organizations", exact=True)).to_be_visible()

@@ -82,7 +82,7 @@ def test_verify_all_agents_listed_in_dropdown(authenticated_page, organization_p
     assert response.status_code == 200
 
     agents_api = response.json()
-    agent_names = [agent["name"] for agent in agents_api]
+    agent_names = [agent["name"] for agent in agents_api["data"]]
 
     page.navigate_to_organizations()
     page.open_form()

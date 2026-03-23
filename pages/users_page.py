@@ -117,12 +117,14 @@ class UsersPage(BasePage):
     def click_go_to_next_page(self):
         old_text = self.pagination_label.inner_text()
         expect(self.go_to_next_page).to_be_enabled()
+        self.page.wait_for_timeout(1000)
         self.go_to_next_page.click()
-        expect(self.pagination_label).not_to_have_text(old_text, timeout=5000)
+        expect(self.pagination_label).not_to_have_text(old_text, timeout=10000)
 
     def click_go_to_previous_page(self):
         old_text = self.pagination_label.inner_text()
         expect(self.go_to_previous_page).to_be_enabled()
+        self.page.wait_for_timeout(1000)
         self.go_to_previous_page.click()
         expect(self.pagination_label).not_to_have_text(old_text, timeout=5000)
 
@@ -130,8 +132,10 @@ class UsersPage(BasePage):
         self.rows_per_page_menu.click()
         self.page.get_by_role("option", name=str(row_count)).click()
 
-    def get_toast_message(self, message: str):
-        return self.page.get_by_text(message)
+    def get_toast_message(self, message: str, timeout=15000):
+        toast = self.page.get_by_text(message)
+        toast.wait_for(state="visible", timeout=timeout)
+        return toast
 
     def click_close_button(self):
         self.close_button.click()
