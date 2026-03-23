@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime
 from dotenv import load_dotenv
 from playwright.sync_api import Page, Browser
-
+from utils.test_data_loader import TestDataLoader
 from utils.env_loader import get_env
 from utils.data_reader import DataReader
 from pages.login_page import LoginPage
@@ -13,6 +13,7 @@ from pages.users_page import UsersPage
 
 
 load_dotenv()
+data = DataReader.load_json("testdata/user_org_data.json")
 
 ENV = get_env()
 config = DataReader.load_json(f"configs/{ENV}.json")
@@ -125,7 +126,9 @@ def users_page(authenticated_page):
 def integration_data():
     return DataReader.load_json("testdata/user_org_data.json")
 
-
+@pytest.fixture(scope="session")
+def test_data():
+    return DataReader.load_json("testdata/user_org_data.json")
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -155,3 +158,48 @@ def pytest_runtest_makereport(item, call):
             screenshots_dir.mkdir(exist_ok=True)
             timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
             pg.screenshot(path=str(screenshots_dir / f"{item.name}_{timestamp}.png"), full_page=True)
+# ---------------------------------------
+# 🔹 Fixture: Create Org WITH agents
+# ---------------------------------------
+@pytest.fixture
+def org_with_agents(authenticated_page):
+    page = authenticated_page
+    org = OrganizationsPage(page)
+
+    base = data["org_with_agents"]
+    org_data = TestDataLoader.build_organization(base["contact"])
+
+    org.open_form()
+    org.fill_basic_info(org_data["name"])
+    org.fill_contact_info(**org_data["contact"])
+    org.select_agent(base["agents"])
+    org.submit_form()
+    org.verify_success()
+
+    return {
+        "name": org_data["name"],
+        "agents": base["agents"]
+    }
+
+
+# ---------------------------------------
+# 🔹 Fixture: Org WITHOUT agents
+# ---------------------------------------
+@pytest.fixture
+def org_without_agents(authenticated_page):
+    page = authenticated_page
+    org = OrganizationsPage(page)
+
+    base = data["org_no_agents"]
+    org_data = TestDataLoader.build_organization(base["contact"])
+
+    org.open_form()
+    org.fill_basic_info(org_data["name"])
+    org.fill_contact_info(**org_data["contact"])
+    org.submit_form()
+    org.verify_success()
+
+    return {
+        "name": org_data["name"],
+        "agents": []
+    }

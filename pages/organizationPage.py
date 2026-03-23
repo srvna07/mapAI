@@ -137,3 +137,49 @@ class OrganizationsPage(BasePage):
     def verify_organization_in_table(self, org_name: str):
         self.search_organization(org_name)
         expect(self.page.get_by_text(org_name).first).to_be_visible()
+
+    def get_dropdown_option(self, name):
+        return self.page.get_by_role("option", name=name, exact=True)
+    
+    def wait_for_agent_dropdown_ready(self):
+        expect(self.agent_dropdown).to_be_visible()
+        expect(self.agent_dropdown).to_be_enabled()
+
+    def wait_for_agents_loaded(self, agents):
+        expect(self.get_dropdown_option(agents[0])).to_be_visible()
+
+    def verify_selected_agents_persist(self, agents):
+        self.open_agent_dropdown()
+        self.wait_for_agents_loaded(agents)
+
+        for agent in agents:
+            expect(self.get_dropdown_option(agent)).to_be_visible()
+
+        self.agent_dropdown.press("Escape")
+
+    def get_agents_for_organization(self, org_name):
+        self.select_organization(org_name)
+        self.open_agent_dropdown()
+        agents = self.page.get_by_role("option").all_inner_texts()
+        self.close_dropdown()
+        return agents
+    
+    def get_selected_agent_option(self, agent_name):
+        return self.page.get_by_role("option", name=agent_name).filter(
+            has=self.page.locator('[aria-selected="true"]')
+    )
+
+    def unselect_agents(self, agents):
+        self.open_agent_dropdown()
+
+        for agent in agents:
+         option = self.page.get_by_role("option", name=agent, exact=True)
+
+        # Ensure option is visible
+        expect(option).to_be_visible()
+
+        # Click to toggle OFF selection
+        option.click()
+
+    # Close dropdown
+        self.page.keyboard.press("Escape")
