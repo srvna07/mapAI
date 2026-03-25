@@ -3,6 +3,7 @@ import string
 from datetime import datetime
 import uuid
 import requests
+import os
 
 
 class DataFactory:
@@ -84,6 +85,47 @@ class DataFactory:
             "organization_id": data["user"]["organization_id"],           
             "roleId": data["user"]["role_id"],
             "isActive": True
+        }
+    @staticmethod
+    def _unique_suffix():
+            """
+            Generates a unique suffix using worker + timestamp
+            Used for parallel test safety
+            """
+            import os
+            worker = os.getenv("PYTEST_XDIST_WORKER", "gw0")
+            timestamp = datetime.now().strftime("%Y%m%d%H%M%S%f")
+            return f"{worker}_{timestamp}"
+
+    @staticmethod
+    def build_user(base_user: dict) -> dict:
+        """
+        Combines static + dynamic data to create a full user payload
+        Rules:
+        - All values start with 'test'
+        - Email must not contain '_'
+        """
+        suffix = DataFactory._unique_suffix()
+
+        return {
+            "first_name": f"test{DataFactory.generate_first_name()}{suffix}",
+            "last_name": f"test{DataFactory.generate_last_name()}{suffix}",
+            "email": f"test{suffix.replace('_', '')}@abc.com",
+            "phone": DataFactory.generate_phone(),
+            "role": base_user["role"],
+            "password": base_user["password"]
+        }
+
+    @staticmethod
+    def build_organization(contact_data: dict) -> dict:
+        """
+        Creates organization payload with dynamic name
+        """
+        suffix = DataFactory._unique_suffix()
+
+        return {
+            "name": f"test_{suffix}",
+            "contact": contact_data
         }
 
     

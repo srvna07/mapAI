@@ -1,9 +1,9 @@
 import pytest
 from playwright.sync_api import expect
-
+from utils.data_factory import DataFactory
 from pages.organizationPage import OrganizationsPage
 from pages.users_page import UsersPage
-from utils.test_data_loader import TestDataLoader
+
 
 
 # ---------------------------------------
@@ -30,7 +30,7 @@ def test_add_agent_reflected(authenticated_page, test_data):
     user = UsersPage(page)
 
     base_org = test_data["org_with_agents"]
-    org_data = TestDataLoader.build_organization(base_org["contact"])
+    org_data = DataFactory.build_organization(base_org["contact"])
     new_agents = test_data["org_add_agent"]["agents"]
 
     # Create org
@@ -66,7 +66,7 @@ def test_remove_agent_reflected(authenticated_page, test_data):
     user = UsersPage(page)
 
     base_org = test_data["org_with_agents"]
-    org_data = TestDataLoader.build_organization(base_org["contact"])
+    org_data = DataFactory.build_organization(base_org["contact"])
     remove_agents = test_data["org_remove_agent"]["agents"]
 
     # Create org
@@ -131,7 +131,7 @@ def test_deleted_org_not_visible(authenticated_page, test_data):
     org = OrganizationsPage(page)
     user = UsersPage(page)
 
-    org_data = TestDataLoader.build_organization(test_data["org_delete"]["contact"])
+    org_data = DataFactory.build_organization(test_data["org_delete"]["contact"])
 
     org.open_form()
     org.fill_basic_info(org_data["name"])
@@ -157,7 +157,7 @@ def test_user_created_with_agent(authenticated_page, org_with_agents, test_data)
     user = UsersPage(authenticated_page)
 
     base_user = test_data["user_data"]
-    user_data = TestDataLoader.build_user(base_user)
+    user_data = DataFactory.build_user(base_user)
 
     user.navigate_to_users_page()
     user.click_add_user_button()
