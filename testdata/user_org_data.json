@@ -1,0 +1,55 @@
+{
+  "org_with_agents": {
+    "contact": {
+      "address1": "Test",
+      "address2": "Test",
+      "country": "India",
+      "city": "Chennai",
+      "state": "TN",
+      "zip_code": "600001"
+    },
+    "agents": [
+      "Geekey",
+      "Apogee"
+    ]
+  },
+
+  "org_add_agent": {
+    "agents": [
+      "QuoteBot"
+    ]
+  },
+
+  "org_remove_agent": {
+    "agents": [
+      "Geekey"
+    ]
+  },
+
+  "org_no_agents": {
+    "contact": {
+      "address1": "Test",
+      "address2": "Test",
+      "country": "India",
+      "city": "Chennai",
+      "state": "TN",
+      "zip_code": "600002"
+    }
+  },
+
+  "org_delete": {
+    "contact": {
+      "address1": "Test",
+      "address2": "Test",
+      "country": "India",
+      "city": "Chennai",
+      "state": "TN",
+      "zip_code": "600002"
+    }
+  },
+
+  "user_data": {
+    "role": "Testroles",
+    "password": "Password123"
+  }
+}

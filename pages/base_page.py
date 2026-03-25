@@ -27,3 +27,17 @@ class BasePage:
         option = self.page.get_by_role("option", name=label, exact=True)
         expect(option).to_be_visible()
         option.click()
+    def close_dialog_if_present(self):
+        
+        try:
+            dialog = self.page.locator("div[role='dialog']")
+
+            if dialog.is_visible(timeout=3000):
+            # Try common close buttons
+                close_btn = dialog.get_by_role("button", name="Close")
+            if close_btn.is_visible():
+                close_btn.click()
+            else:
+                self.page.keyboard.press("Escape")
+        except:
+         pass

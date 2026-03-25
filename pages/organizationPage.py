@@ -1,6 +1,16 @@
 from playwright.sync_api import Page, expect
 from .base_page import BasePage
 from time import sleep
+import os
+import pytest
+import json
+from utils.data_factory import DataFactory
+from pages.users_page import UsersPage
+from utils.data_reader import DataReader
+from dotenv import load_dotenv
+
+load_dotenv()
+data = DataReader.load_json("testdata/user_org_data.json")
 
 
 class OrganizationsPage(BasePage):
@@ -135,6 +145,144 @@ class OrganizationsPage(BasePage):
             expect(
                 self.page.get_by_role("option", name=agent, exact=True)).to_be_visible()
 
+    def verify_organization_in_table(self, org_name: str):
+        self.search_organization(org_name)
+        expect(self.page.get_by_text(org_name).first).to_be_visible()
+
+    def get_dropdown_option(self, name):
+        return self.page.get_by_role("option", name=name, exact=True)
+    
+    def wait_for_agent_dropdown_ready(self):
+        expect(self.agent_dropdown).to_be_visible()
+        expect(self.agent_dropdown).to_be_enabled()
+
+    def wait_for_agents_loaded(self, agents):
+        expect(self.get_dropdown_option(agents[0])).to_be_visible()
+
+    def verify_selected_agents_persist(self, agents):
+        self.open_agent_dropdown()
+        self.wait_for_agents_loaded(agents)
+
+        for agent in agents:
+            expect(self.get_dropdown_option(agent)).to_be_visible()
+
+        self.agent_dropdown.press("Escape")
+
+    def get_agents_for_organization(self, org_name):
+        self.select_organization(org_name)
+        self.open_agent_dropdown()
+        agents = self.page.get_by_role("option").all_inner_texts()
+        self.close_dropdown()
+        return agents
+    
+    def get_selected_agent_option(self, agent_name):
+        return self.page.get_by_role("option", name=agent_name).filter(
+            has=self.page.locator('[aria-selected="true"]')
+    )
+
+    def unselect_agents(self, agents):
+        self.open_agent_dropdown()
+
+        for agent in agents:
+         option = self.page.get_by_role("option", name=agent, exact=True)
+
+        # Ensure option is visible
+        expect(option).to_be_visible()
+
+        # Click to toggle OFF selection
+        option.click()
+
+    # Close dropdown
+        self.page.keyboard.press("Escape")
     
     def verify_organization_page_loaded(self):
         expect(self.page.get_by_text("Organizations", exact=True)).to_be_visible()
+
+# ---------------------------------------
+#  Fixture: Create Org WITH agents
+# ---------------------------------------
+    @pytest.fixture
+    def org_with_agents(authenticated_page):
+        page = authenticated_page
+        org = OrganizationsPage(page)
+
+        base = data["org_with_agents"]
+        org_data = DataFactory.build_organization(base["contact"])
+
+        org.open_form()
+        org.fill_basic_info(org_data["name"])
+        org.fill_contact_info(**org_data["contact"])
+        org.select_agent(base["agents"])
+        org.submit_form()
+        org.verify_success()
+
+        return {
+            "name": org_data["name"],
+            "agents": base["agents"]
+    }
+
+
+# ---------------------------------------
+#  Fixture: Org WITHOUT agents
+# ---------------------------------------
+
+
+# Users page fixture
+    @pytest.fixture
+    def users_page(page):
+        users_page_obj = UsersPage(page)
+        return users_page_obj
+
+    @pytest.fixture(scope = "session")
+    def users_test_data():
+    # Load your static JSON file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(current_dir, "..", "..", "testdata", "users_page_test_data.json")
+        with open(path) as f:
+            data = json.load(f)
+
+    # Setup Data for Organization Creation
+        organization = data["organization"]
+        organization["name"] = DataFactory.generate_org_name()
+
+    # Setup another organization for test
+        another_organization = data["another_organization"]
+        another_organization["name"] = DataFactory.generate_org_name(prefix = "test_another_org_")
+
+    # Setup Data for "Create"
+        user = data["users"]
+        user["first_name"] = DataFactory.generate_first_name()
+        user["last_name"]  = DataFactory.generate_last_name()
+        user["email"]      = DataFactory.random_email()
+        user["phone"]      = DataFactory.generate_phone()
+        user["password"]   = DataFactory.generate_password()
+
+    # Setup Data for "Edit"
+        edited = data["edited_users"]
+        edited["first_name"] = DataFactory.generate_first_name(prefix="Edited")
+        edited["last_name"]  = DataFactory.generate_last_name(prefix="Edited")
+        edited["email"]      = DataFactory.random_email(prefix="Edited")
+        edited["phone"]      = DataFactory.generate_phone()
+
+        return data
+
+
+# Organization page fixture
+    @pytest.fixture
+    def org_without_agents(authenticated_page):
+        page = authenticated_page
+        org = OrganizationsPage(page)
+
+        base = data["org_no_agents"]
+        org_data = DataFactory.build_organization(base["contact"])
+
+        org.open_form()
+        org.fill_basic_info(org_data["name"])
+        org.fill_contact_info(**org_data["contact"])
+        org.submit_form()
+        org.verify_success()
+
+        return {
+            "name": org_data["name"],
+            "agents": []
+    }

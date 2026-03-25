@@ -20,7 +20,7 @@ class UsersPage(BasePage):
 
         #add user form
         self.first_name_textbox = page.get_by_role("textbox", name="First Name")
-        self.last_name_testbox = page.get_by_role("textbox", name="Last Name")
+        self.last_name_textbox = page.get_by_role("textbox", name="Last Name")
         self.email_textbox = page.get_by_role("textbox", name="Email")
         self.phone_number_textbox = page.get_by_role("textbox", name="Phone Number")
         self.role_combobox = page.get_by_role("combobox", name="Role")
@@ -34,7 +34,7 @@ class UsersPage(BasePage):
         self.edit_user_button = page.get_by_role("button").nth(1)
         self.edit_user_confirmation_button = page.get_by_role("button", name="Yes, Proceed")
 
-        #delete suer 
+        #delete user 
         self.delete_user_button = page.get_by_role("button").nth(2)
         self.delete_user_confirmation_button = page.get_by_role("button", name="Delete")
 
@@ -80,7 +80,7 @@ class UsersPage(BasePage):
         self.first_name_textbox.fill(first_name)
 
     def fill_last_name(self, last_name):
-        self.last_name_testbox.fill(last_name)
+        self.last_name_textbox.fill(last_name)
 
     def fill_email_textbox(self, email):
         self.email_textbox.fill(email)
@@ -157,3 +157,77 @@ class UsersPage(BasePage):
 
     def verify_page_label_contains(self, text):
         expect(self.pagination_label).to_contain_text(text)
+
+    def get_dropdown_option(self, name):
+        return self.page.get_by_role("option", name=name, exact=True)
+    
+    def select_dropdown_value(self, combobox, value):
+        combobox.click()
+        self.get_dropdown_option(value).click()
+
+    def verify_agents_visible(self, agents):
+        self.wait_for_agents_loaded(agents)
+        for agent in agents:
+            expect(self.get_dropdown_option(agent)).to_be_visible()
+
+    def close_agent_dropdown(self):
+        self.page.keyboard.press("Escape")
+          
+
+
+    def open_agent_dropdown(self):
+        expect(self.agent_combobox).to_be_visible()
+        expect(self.agent_combobox).to_be_enabled()
+        self.agent_combobox.click()
+
+    def close_dropdown(self):
+        self.page.keyboard.press("Escape")
+
+    def get_agent_options(self):
+        return self.page.get_by_role("option")
+
+    def get_agent_count(self):
+        return self.get_agent_options().count()
+
+    def get_all_agent_names(self):
+        return self.get_agent_options().all_text_contents()
+
+    def verify_agents_visible(self, agents):
+        for agent in agents:
+            expect(self.page.get_by_role("option", name=agent)).to_be_visible()
+
+    def verify_agents_not_visible(self, agents):
+        options = self.get_all_agent_names()
+
+        for agent in agents:
+            assert agent not in options, f"Agent '{agent}' still visible in dropdown"
+
+    def verify_no_agents_message(self):
+        expect(self.page.get_by_text("No agents available")).to_be_visible()
+    
+    def get_agents_for_organization(self, org_name):
+        self.select_organization(org_name)
+        self.open_agent_dropdown()
+        agents = self.get_all_agent_names()
+        self.close_dropdown()
+        return agents
+    
+    def open_organization_dropdown(self):
+        self.organization_combobox.click()
+
+    def verify_organization_not_present(self, org_name):
+        expect(self.page.get_by_role("option", name=org_name)).not_to_be_visible()
+    def unselect_agents(self, agents):
+        self.open_agent_dropdown()
+
+        for agent in agents:
+            option = self.page.get_by_role("option", name=agent)
+
+        
+            expect(option).to_be_visible()
+
+     
+            if option.get_attribute("aria-selected") == "true":
+             option.click()
+
+        self.agent_dropdown.press("Escape")
