@@ -9,7 +9,7 @@ class DataFactory:
 
     @staticmethod
     def random_string(length: int = 4) -> str:
-        return "".join(random.choices(string.ascii_letters + string.digits, k=length))
+        return "".join(random.choices(string.ascii_letters, k=length))
 
     @staticmethod
     def random_username(prefix: str = "test_user_") -> str:
@@ -48,13 +48,11 @@ class DataFactory:
         chars = string.ascii_letters + string.digits + "!@#$%^&*A"
         return "".join(random.choices(chars, k=length))
     
-    @staticmethod
-    def generate_org_name(prefix: str ="test_org") -> str:
-        return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+    
     
     @staticmethod
     def generate_org_name(prefix="test_org"):
-        return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{DataFactory.random_string(4)}"
+        return f"{prefix}_{DataFactory.random_string(4)}"
 
     @staticmethod
     def generate_invalid_uuid():
