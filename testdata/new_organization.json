@@ -1,6 +1,6 @@
 {
   "organization": {
-    "name": "test_org"
+    "name": "test_org_"
   },
   "contact": {
     "address1": "Test",
@@ -11,7 +11,7 @@
     "zip_code": "606201"
   },
   "Agent": [
-    "Geekey",
+    "QuoteBot",
     "Apogee"
   ],
   "Model": [

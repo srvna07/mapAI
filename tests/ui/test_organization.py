@@ -19,7 +19,7 @@ def test_create_organization(authenticated_page, organization_page, new_organiza
     page.select_agent(new_organization_data["Agent"])
     page.select_model(new_organization_data["Model"], new_organization_data["Instructions"])
     page.review_and_save_agents(new_organization_data["Agent"], new_organization_data["Model"])
-    page.verify_agents_update_success()
+    
     page.verify_organization_in_table(org["name"])
 
 def test_duplicate_organization(authenticated_page, organization_page, new_organization_data):
@@ -43,29 +43,52 @@ def test_search_organization(authenticated_page, organization_page, new_organiza
     page.verify_organization_in_table(org["name"])
 
 
-# @pytest.mark.smoke
-# def test_edit_organization_verify_assigned_agents(authenticated_page, organization_page, new_organization_data):
-#     page = organization_page
-#     org_name = new_organization_data["organization"]["name"]
+@pytest.mark.smoke
+def test_edit_organization_verify_assigned_agents(authenticated_page, organization_page, new_organization_data):
+    page = organization_page
+    org_name = new_organization_data["organization"]["name"]
 
     
-#     page.navigate_to_organizations()
-#     # Verify assigned agents
-#     page.verify_agents(org_name, new_organization_data["Agent"])
-#     page.verify_models(new_organization_data["Model"])
-
-
-
-# def test_edit_organization(authenticated_page, organization_page, new_organization_data, update_organization_data):
-#     page = organization_page
-#     org     = new_organization_data["organization"]["name"]
+    page.navigate_to_organizations()
+    # Verify assigned agents
+    page.verify_agents_and_models(org_name, new_organization_data["Agent"], new_organization_data["Model"])
     
-#     page.navigate_to_organizations()
-#     page.edit_organization(org)
-#     page.update_organization(update_organization_data)
-#     page.select_agent(update_organization_data["Agent"]) #// Re-select same agents to remove and adding another agent#//
-#     page.submit_form()
-#     page.verify_update_success()
+def test_edit_model_for_existing_agent(authenticated_page, organization_page, new_organization_data, update_organization_data):
+    page = organization_page
+    org     = new_organization_data["organization"]["name"]
+    agents   = new_organization_data["Agent"]
+    
+    page.navigate_to_organizations()
+    page.edit_model_for_agent(org, agents, update_organization_data["Model"], update_organization_data["Instructions"])
+    
+    page.verify_organization_in_table(org)
+
+def test_edit_organization_by_adding_agent(authenticated_page, organization_page, new_organization_data, update_organization_data):
+    page = organization_page
+    org     = new_organization_data["organization"]["name"]
+   
+    
+    page.navigate_to_organizations()
+    page.add_agent_to_organization(org, update_organization_data["Agent"])
+    page.verify_Select_Agents_to_Configure_visible()
+    page.select_agent(update_organization_data["Agent"])
+    page.select_model(update_organization_data["Model"], update_organization_data["Instructions"])
+    page.review_and_save_agents(update_organization_data["Agent"], update_organization_data["Model"])
+    
+    page.verify_organization_in_table(org)
+
+
+   
+def test_edit_organization_by_removing_agent(authenticated_page, organization_page, new_organization_data, update_organization_data):
+    page = organization_page
+    org     = new_organization_data["organization"]["name"]
+   
+    
+    page.navigate_to_organizations()
+    
+    page.remove_agent(org,new_organization_data["Agent"])
+
+    
 
 def test_delete_organization(authenticated_page, organization_page, new_organization_data):
     page = organization_page

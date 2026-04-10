@@ -6,13 +6,16 @@ from playwright.sync_api import expect
 def test_create_a_organization_to_users_testing(authenticated_page, organization_page, users_test_data):
     data = users_test_data["organization"]
     agents = users_test_data["agent"]
+    models = users_test_data["model"]
+    instructions = users_test_data["instructions"]
+    page = organization_page
 
     # Navigation
-    organization_page.open_form()
+    page.open_form()
 
     # Form Filling
-    organization_page.fill_basic_info(data["name"])
-    organization_page.fill_contact_info(
+    page.fill_basic_info(data["name"])
+    page.fill_contact_info(
         data["address1"], 
         data["address2"], 
         data["country"], 
@@ -20,27 +23,31 @@ def test_create_a_organization_to_users_testing(authenticated_page, organization
         data["state"], 
         data["zip_code"]
     )
+
+    page.submit_form()
+
+    page.verify_success()
+    page.verify_Select_Agents_to_Configure_visible()
+    page.select_agent(agents)
+    page.select_model(models, instructions)
+    page.review_and_save_agents(agents, models)
     
-    # Selecting agents
-    organization_page.select_agent(agents)
-
-    # Save
-    organization_page.submit_form()
-    organization_page.verify_success()
-
+    page.verify_organization_in_table(data["name"])
 @pytest.mark.smoke
 def test_create_another_organization_to_users_testing(authenticated_page, organization_page, users_test_data):
     data = users_test_data["another_organization"]
     agents = users_test_data["agent"]
+    models = users_test_data["model"]
+    instructions = users_test_data["instructions"]
 
-    # Navigation
-    organization_page.open_form()
-
+    page = organization_page
+    page.open_form()
+    
     # Form Filling
-    organization_page.fill_basic_info(data["name"])
+    page.fill_basic_info(data["name"])
 
     # Pass the data as strings by removing the extra brackets []
-    organization_page.fill_contact_info(
+    page.fill_contact_info(
         data["address1"], 
         data["address2"], 
         data["country"], 
@@ -49,15 +56,20 @@ def test_create_another_organization_to_users_testing(authenticated_page, organi
         data["zip_code"]
     )
     
-    # Selecting agents
-    organization_page.select_agent(agents)
+    
 
-    # Save
-    organization_page.submit_form()
-    organization_page.verify_success()
+    page.submit_form()
+
+    page.verify_success()
+    page.verify_Select_Agents_to_Configure_visible()
+    page.select_agent(agents)
+    page.select_model(models, instructions)
+    page.review_and_save_agents(agents, models)
+    
+    page.verify_organization_in_table(data["name"])
 
 
-# 1
+# # 1
 @pytest.mark.smoke
 def test_create_new_user(authenticated_page, users_page, users_test_data):
     data = users_test_data["users"]
@@ -75,7 +87,9 @@ def test_create_new_user(authenticated_page, users_page, users_test_data):
     
     users_page.select_role(data["admin_role"])
     users_page.select_organization(org_name)
-    users_page.select_agent(agents[0])
+    
+    combined_agent = f"{org_name}-{users_test_data['agent'][0]}"
+    users_page.select_agent(combined_agent)
 
     users_page.fill_password_textbox(data["password"])
     users_page.click_save_button()
@@ -103,7 +117,9 @@ def test_edit_created_user(authenticated_page, users_page, users_test_data):
     users_page.fill_phone_number(data["phone"])
     
     users_page.select_organization(org_name)
-    users_page.select_agent(users_test_data["agent"][1])
+    combined_agent = f"{org_name}-{users_test_data['agent'][1]}"
+    users_page.select_agent(combined_agent)
+    
 
     users_page.click_save_button()
     users_page.click_edit_user_confirmation_button()
@@ -127,6 +143,7 @@ def test_search_user(authenticated_page, users_page, users_test_data):
 def test_check_duplicate_user_creation(authenticated_page, users_page, users_test_data):
     data = users_test_data["edited_users"]
     toast_message = users_test_data["toast_messages"]
+    org_name = users_test_data["organization"]["name"]
     
     # Navigation
     users_page.navigate_to_users_page()
@@ -140,15 +157,17 @@ def test_check_duplicate_user_creation(authenticated_page, users_page, users_tes
     
     # Dropdowns (Still pulled from JSON)
     users_page.select_role(data["role"])
-    users_page.select_organization(data["organization"])
-    users_page.select_agent(data["agent"])
+    users_page.select_organization(org_name)
+    combined_agent = f"{org_name}-{users_test_data['agent'][0]}"
+    users_page.select_agent(combined_agent)
+    
 
     users_page.fill_password_textbox(data["password"])
     users_page.click_save_button()
 
     expect(users_page.get_toast_message(toast_message["error_creating_user"])).to_be_visible()
 
-# 5
+# # 5
 @pytest.mark.smoke
 def test_delete_user(authenticated_page, users_page, users_test_data):
     data = users_test_data["edited_users"]["email"]

@@ -9,7 +9,7 @@
     "zip_code": "606201"
   },
 
-   "another_organization":{
+  "another_organization":{
     "name": "organization_name",
     "address1": "Test",
     "address2": "Test",
@@ -20,8 +20,16 @@
   },
 
   "agent": [
-    "Geekey",
+    "QuoteBot",
     "Apogee"
+  ],
+  "model": [
+    "gpt-4o-2",
+    "gpt-4o"
+  ],
+  "instructions": [
+    "You are LLM, a helpful assistant.",
+    "You are LLM, a helpful assistant."
   ],
 
   "users": {

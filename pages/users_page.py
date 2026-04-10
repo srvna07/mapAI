@@ -96,9 +96,9 @@ class UsersPage(BasePage):
         self.organization_combobox.click()
         self.page.get_by_role("option", name=organization_name, exact=True).click()
 
-    def select_agent(self, agent_name):
+    def select_agent(self, combined_agent):
         self.agent_combobox.click()
-        self.page.get_by_role("option", name=agent_name, exact=True).click()
+        self.page.get_by_role("option", name=combined_agent, exact=True).click()
         # self.page.wait_for_timeout(700)
         self.page.keyboard.press("Escape")
 

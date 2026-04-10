@@ -1,6 +1,7 @@
 from playwright.sync_api import Page, expect
 from .base_page import BasePage
 from time import sleep
+import re
 
 
 class OrganizationsPage(BasePage):
@@ -19,6 +20,7 @@ class OrganizationsPage(BasePage):
         self.search_input             = page.get_by_role("textbox", name="Search")
         self.agents_to_configure_tittle = page.get_by_text("Select Agents to Configure")
         self.update_agent_tittle         = page.get_by_text("Update Agent")
+        self.update_btn                  = page.get_by_role("button", name="Update")
 
         self.organization_name        = page.get_by_role("textbox", name="Organization Name")
         self.address_1                = page.get_by_role("textbox", name="Address Line 1")
@@ -46,6 +48,7 @@ class OrganizationsPage(BasePage):
         self.success_icon_text         = page.get_by_text("All agents configured")
         self.ready_status              = page.get_by_text("Ready")
         self.choose_agent              = page.get_by_text("Choose Agent")
+        self.add_agent_btn             = page.get_by_role("button", name="+ Add Agent")
 
 
 
@@ -71,7 +74,7 @@ class OrganizationsPage(BasePage):
         self.country.fill(country)
         self.zip_code.fill(zip_code)
         
-    def select_agent(self, agent_name: str):
+    def select_agent(self, agent_name):
         self.total_agents = len(agent_name)
         expect(self.agents_to_configure_tittle).to_be_visible()
         for agent in agent_name:
@@ -154,13 +157,13 @@ class OrganizationsPage(BasePage):
         row.wait_for(state="visible")
         row.locator("button").nth(0).click()  # Click edit button in the row
     
-    def edit_agents(self, org_name: str):
+    def add_agent_to_organization(self, org_name: str, agent: str):
         self.search_organization(org_name)
         row = self.page.locator("tr", has_text=org_name).first
         row.wait_for(state="visible")
-        row.locator("button").nth(0).click()  # Click edit button in the row
-        self.page.get_by_role("button", name="Edit Agents").click()
-
+        add_agent_btn = row.get_by_role("button", name="+ Add Agent")
+        add_agent_btn.click()
+    
     def delete_organization(self, org_name: str):
         self.search_organization(org_name)
         row = self.page.locator("tr", has_text=org_name).first
@@ -216,58 +219,34 @@ class OrganizationsPage(BasePage):
         expect(self.page.get_by_role("cell", name=org_name).first).not_to_be_visible()
 
     
-    def verify_agents(self, org_name, agent_names):
+    def verify_agents_and_models(self, org_name, agent_names, models):
 
         # Search and open organization
         self.search_organization(org_name)
 
         row = self.page.locator("tr", has_text=org_name).first
 
-        #  Click the agent chip inside that row
-        agent_chip = row.locator("div[role='button']", has_text=agent_names[0]).first
-        expect(agent_chip).to_be_visible()
-        agent_chip.click()
+        for i, agent in enumerate(agent_names):
 
-        # Validate popup
-        expect(self.agents_to_configure_tittle).to_be_visible()
+            #  Click agent chip directly
+            agent_chip = row.locator("div[role='button']", has_text=agent).first
+            expect(agent_chip).to_be_visible()
+            agent_chip.click()
 
-        for agent in agent_names:
-            agent_locator = self.page.get_by_role("button", name=agent, exact=True)
+            #  Validate Update Agent modal opens
+            expect(self.update_agent_tittle).to_be_visible()
 
-            # Verify agent visible
-            expect(agent_locator).to_be_visible()
-
-            # Verify checkbox selected
-            checkbox = agent_locator.locator("input[type='checkbox']")
-
-            if checkbox.count() > 0:
-                expect(checkbox).to_be_checked()
-            else:
-                # fallback (MUI)
-                expect(agent_locator).to_have_attribute("aria-checked", "true")
-        self.next_btn.click()
-
-        
-
-    def verify_models(self, models):
-
-        # Validate Update Agent modal
-        expect(self.update_agent_tittle).to_be_visible()
-
-        agent_step = self.page.locator("text=/Agent \\d+ of \\d+/")
-
-        for i in range(len(models)):
-
-            # Validate step
-            expect(agent_step).to_contain_text(f"Agent {i+1} of {len(models)}")
-
-            # Validate selected model is visible
+            #  Validate selected model
             model_locator = self.page.get_by_text(models[i], exact=True)
             expect(model_locator).to_be_visible()
 
-            # Go to next agent
-            self.next_btn.click()
-        
+            #  Click Update button
+            expect(self.update_btn).to_be_visible()
+            self.update_btn.click()
+
+            #  Ensure popup is closed before next iteration
+            expect(self.update_agent_tittle).not_to_be_visible()
+            
     def verify_organization_page_loaded(self):
         expect(self.page.get_by_text("Organizations", exact=True)).to_be_visible()
 
@@ -282,3 +261,69 @@ class OrganizationsPage(BasePage):
             agent_locator = self.page.get_by_role("button", name=agent, exact=True)
 
             expect(agent_locator).to_be_visible()
+
+    def remove_agent(self, org_name: str, agent_names: list):
+        self.search_organization(org_name)
+
+        row = self.page.locator("tr", has_text=org_name).first
+        row.wait_for(state="visible")
+
+        #  Step 1: Expand hidden agents if +N exists
+        overflow = row.locator("text=/^\\+\\d+$/")
+
+        if overflow.count() > 0 and overflow.first.is_visible():
+            overflow.first.click()
+
+        # Step 2: Now remove agents (they should be visible in same row)
+        for agent in agent_names:
+
+            #  Re-locate AFTER expansion (important!)
+            agent_chip = row.locator("div[role='button']").filter(has_text=agent).first
+            expect(agent_chip).to_be_visible()
+
+            #  Click delete icon inside chip
+            delete_icon = agent_chip.locator("svg")
+            delete_icon.click()
+
+            #  Confirmation popup (this WILL appear)
+            confirm_popup = self.page.get_by_role("dialog")
+            expect(confirm_popup).to_be_visible()
+
+            # Validate agent name
+            expect(confirm_popup).to_contain_text(agent)
+
+            # Type agent name
+            confirm_popup.get_by_role("textbox").fill(agent)
+
+            # Click Remove
+            confirm_popup.get_by_role("button", name=re.compile("remove", re.I)).click()
+
+            # Wait for popup to close
+            confirm_popup.wait_for(state="hidden")
+
+    def edit_model_for_agent(self, org_name: str, agent_names: list, models: list, instructions: list):
+        self.search_organization(org_name)
+
+        row = self.page.locator("tr", has_text=org_name).first
+        row.wait_for(state="visible")
+        for i, agent_name in enumerate(agent_names):
+        # Click agent chip directly
+            agent_chip = row.locator("div[role='button']", has_text=agent_name).first
+            expect(agent_chip).to_be_visible()
+            agent_chip.click()
+
+            # Validate Update Agent modal opens
+            expect(self.update_agent_tittle).to_be_visible()
+
+            # Select new model
+            self.model_dropdown.click()
+            self.page.get_by_role("option", name=models[i], exact=True).click()
+
+            # Update instructions
+            self.instructions_field.fill(instructions[i])
+            # Validate tools
+            expect(self.tools_section).to_be_visible()
+            expect(self.code_interpreter_checkbox).to_be_visible()
+
+            
+            self.update_btn.click()

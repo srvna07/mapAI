@@ -43,12 +43,27 @@ class DataFactory:
         return first_digit + remaining
     
     @staticmethod
-    def generate_password(length: int = 8) -> str:
-        # Ensures password contains letters, digits, and punctuation
-        chars = string.ascii_letters + string.digits + "!@#$%^&*A"
-        return "".join(random.choices(chars, k=length))
-    
-    
+    def generate_password(length: int = 6) -> str:
+        if length < 6:
+            raise ValueError("Password must be at least 6 characters long")
+
+        # Ensure all required character types
+        password = [
+            random.choice(string.ascii_uppercase),  # Uppercase
+            random.choice(string.ascii_lowercase),  # Lowercase
+            random.choice(string.digits),           # Number
+            random.choice("!@#$%^&*"),              # Special character
+        ]
+
+        # Fill remaining characters
+        all_chars = string.ascii_letters + string.digits + "!@#$%^&*"
+        password += random.choices(all_chars, k=length - 4)
+
+        # Shuffle to avoid predictable pattern
+        random.shuffle(password)
+
+        return "".join(password)
+        
     
     @staticmethod
     def generate_org_name(prefix="test_org"):
