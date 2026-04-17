@@ -74,6 +74,18 @@ class DataFactory:
         return str(uuid.uuid4())
 
     @staticmethod
+    def generate_role_name(prefix="test_role"):
+        return f"{prefix}_{DataFactory.random_string(4)}"
+
+    @staticmethod
+    def generate_permission_name(prefix="test_permission"):
+        return f"{prefix}_{DataFactory.random_string(4)}"
+
+    @staticmethod
+    def generate_agent_name(prefix="test_agent"):
+        return f"{prefix}_{DataFactory.random_string(4)}"
+
+    @staticmethod
     def organization(data):
         return {
             "organizationName": data["organization"]["name"],

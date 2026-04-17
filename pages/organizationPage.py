@@ -42,7 +42,7 @@ class OrganizationsPage(BasePage):
         self.instructions_field       = page.get_by_label("Instructions *")
         self.tools_section            = page.get_by_text("TOOLS")
 
-        self.code_interpreter_checkbox = page.get_by_label("code_interpreter")
+        self.code_interpreter_checkbox = page.get_by_role("checkbox", name="Code Interpreter")
         self.total_agents              = 0
         self.review_title              = page.get_by_text("Review & Save")
         self.success_icon_text         = page.get_by_text("All agents configured")
@@ -327,3 +327,13 @@ class OrganizationsPage(BasePage):
 
             
             self.update_btn.click()
+
+    def verify_agents_in_organizationlist(self, agent_name):
+        expect(self.page.get_by_role("button", name=agent_name, exact=True)).to_be_visible()
+        self.page.get_by_role("button", name=agent_name, exact=True).click()
+        self.next_btn.click()
+        self.next_btn.click()
+        self.save_btn.click()
+        expect(self.agents_success_message).to_be_visible()
+
+
