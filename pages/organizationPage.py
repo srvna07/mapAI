@@ -136,7 +136,7 @@ class OrganizationsPage(BasePage):
 
         # --- Click Save ---
         self.save_btn.click()
-
+        sleep(2)
         # --- Validate Success Message ---
         expect(self.agents_success_message).to_be_visible()
                 

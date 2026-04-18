@@ -10,7 +10,8 @@ parallel_suite = [
     "tests/ui/test_organization.py",
     "tests/ui/test_users.py",
     "tests/ui/test_role.py",
-    "tests/ui/test_permission.py"
+    "tests/ui/test_permission.py",
+    "tests/ui/test_template_Agents.py"
 ]
 
 post_suite = [
