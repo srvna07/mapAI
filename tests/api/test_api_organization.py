@@ -1,4 +1,6 @@
 import pytest
+import json
+import requests
 from utils.data_factory import DataFactory
 
 
@@ -23,11 +25,48 @@ def test_get_organization_by_org_id(api_client, new_organization_data):
 
     body = create_res.json()
     org_id = body["id"]
-    org_name = body["organizationName"]
+     # Load json file
+    with open("../../testdata/new_organization.json", "r") as file:
+        data = json.load(file)
+
+    # Save org id
+    data["organization"]["id"] = org_id
+
+    # Write back to file
+    with open("../../testdata/new_organization.json", "w") as file:
+        json.dump(data, file, indent=4)
 
     # Step 2: Get organization by org_id
     response = api_client.get(f"/api/v1/organization/{org_id}")
     assert response.status_code == 200, f"Failed to get organization with id {org_id}: {response.text}"
+
+@pytest.mark.high
+def test_update_organization_by_org_id(api_client, update_organization_data):
+
+    with open("../../testdata/new_organization.json", "r") as file:
+        data = json.load(file)
+
+    org_id = data["organization"]["id"]
+
+    print(org_id)
+
+        # Step 2: Update organization
+    update_payload = DataFactory.update_organization(update_organization_data, org_id)
+
+    update_res = api_client.patch(
+        f"/api/v1/organization/{org_id}",
+        payload=update_payload
+    )
+    print(update_res.status_code)
+    print(update_res.text)
+    assert update_res.status_code == 200
+
+    # assert update_res.status_code == 200, f"Failed to update organization with id {org_id}: {update_res.text}"
+    # Step 3: Verify Update
+    verify_res = api_client.get(f"/api/v1/organization/{org_id}")
+    assert verify_res.status_code == 200, f"Failed to get organization with id {org_id} after update: {verify_res.text}"
+    verify_body = verify_res.json()
+    assert verify_body["organizationName"] == update_payload["organizationName"], "Organization name not updated correctly"
 
 
 @pytest.mark.high
@@ -62,3 +101,14 @@ def test_delete_organization_by_org_id(api_client, new_organization_data):
     # Step 3: Verify Deletion
     verify_res = api_client.get(f"/api/v1/organization/{org_id}")
     assert verify_res.status_code == 404, f"Expected 404 Not Found after deletion, got {verify_res.status_code}"
+
+def test_delete_organization_by_invalid_org_id(api_client, invalid_organization_data):
+
+    invalid_org_id = invalid_organization_data["invalid_data"]["organization_id"]
+
+    response = api_client.delete(
+        f"/api/v1/organization/{invalid_org_id}"
+    )
+
+    assert response.status_code == 404, f"Expected 404 Not Found for invalid org_id deletion, got {response.status_code}{response.text}"    
+

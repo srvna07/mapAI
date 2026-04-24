@@ -11,7 +11,16 @@
     "zip_code": "606202"
   },
   "Agent": [
-    "Geekey", 
-    "Understanding agent "
+    "ABData Validation", 
+    "HR Recruiter Agent"
+  ],
+  "Model": [
+    "gpt-4o",
+    "gpt-4o-2"
+    
+  ],
+  "Instructions": [
+    "You are  LLM, a helpful assistant.",
+    "You are LLM, a helpful assistant."
   ]
 }

@@ -1,0 +1,10 @@
+{
+    "template_agent": {
+        "name": "Test Template Agent",
+        "instructions": "You are a helpful assistant."
+    },
+    "edited_template_agent": {  
+        "name": "Edited Template Agent",
+        "instructions": "You are an even more helpful assistant."
+    }
+}

@@ -14,9 +14,7 @@ def test_api_health_check_status(api_client):
 
 @pytest.mark.high
 def test_api_get_agents(api_client):
-    response = api_client.get("/api/v1/agents/all")
+    response = api_client.get("/api/v1/agent-temp")
     assert response.status_code == 200, f"Failed to get all agents: {response.text}"
     body = response.json()
-    assert "data" in body
-    assert isinstance(body["data"], list)
-    
+    assert isinstance(body, list)

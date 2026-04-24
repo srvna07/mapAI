@@ -36,6 +36,16 @@ def api_client() -> APIClient:
 
     return client
 
+@pytest.fixture
+def role_data():
+    return DataReader.load_json("testdata/new_role_data.json")
+
+@pytest.fixture
+def update_payload(role_id, data):
+    return {
+        "roleName": data["edited_role"]["name"]
+    }
+
 @pytest.fixture(scope="function")
 def new_organization_data():
     data = DataReader.load_json("testdata/new_organization.json")
@@ -46,6 +56,11 @@ def new_organization_data():
 def invalid_organization_data():
     return DataReader.load_json("testdata/new_organization.json")
 
+@pytest.fixture(scope="function")
+def update_organization_data():
+    data = DataReader.load_json("testdata/update_org.json")
+    data["organization"]["name"] = DataFactory.generate_org_name()
+    return data
 
 @pytest.fixture(scope="function")
 def user_test_data():

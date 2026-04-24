@@ -9,7 +9,7 @@ class DataFactory:
 
     @staticmethod
     def random_string(length: int = 4) -> str:
-        return "".join(random.choices(string.ascii_letters + string.digits, k=length))
+        return "".join(random.choices(string.ascii_letters, k=length))
 
     @staticmethod
     def random_username(prefix: str = "test_user_") -> str:
@@ -43,27 +43,66 @@ class DataFactory:
         return first_digit + remaining
     
     @staticmethod
-    def generate_password(length: int = 8) -> str:
-        # Ensures password contains letters, digits, and punctuation
-        chars = string.ascii_letters + string.digits + "!@#$%^&*A"
-        return "".join(random.choices(chars, k=length))
-    
-    @staticmethod
-    def generate_org_name(prefix: str ="test_org") -> str:
-        return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+    def generate_password(length: int = 6) -> str:
+        if length < 6:
+            raise ValueError("Password must be at least 6 characters long")
+
+        # Ensure all required character types
+        password = [
+            random.choice(string.ascii_uppercase),  # Uppercase
+            random.choice(string.ascii_lowercase),  # Lowercase
+            random.choice(string.digits),           # Number
+            random.choice("!@#$%^&*"),              # Special character
+        ]
+
+        # Fill remaining characters
+        all_chars = string.ascii_letters + string.digits + "!@#$%^&*"
+        password += random.choices(all_chars, k=length - 4)
+
+        # Shuffle to avoid predictable pattern
+        random.shuffle(password)
+
+        return "".join(password)
+        
     
     @staticmethod
     def generate_org_name(prefix="test_org"):
-        return f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{DataFactory.random_string(4)}"
+        return f"{prefix}_{DataFactory.random_string(4)}"
 
     @staticmethod
     def generate_invalid_uuid():
         return str(uuid.uuid4())
 
     @staticmethod
+    def generate_role_name(prefix="test_role"):
+        return f"{prefix}_{DataFactory.random_string(4)}"
+
+    @staticmethod
+    def generate_permission_name(prefix="test_permission"):
+        return f"{prefix}_{DataFactory.random_string(4)}"
+
+    @staticmethod
+    def generate_agent_name(prefix="test_agent"):
+        return f"{prefix}_{DataFactory.random_string(4)}"
+
+    @staticmethod
     def organization(data):
         return {
             "organizationName": data["organization"]["name"],
+            "org_logo": "string",
+            "addressline_1": data["contact"]["address1"],
+            "addressline_2": data["contact"]["address2"],
+            "state": data["contact"]["state"],
+            "city": data["contact"]["city"],
+            "country": data["contact"]["country"],
+            "zipcode": data["contact"]["zip_code"]
+        }
+
+    @staticmethod
+    def update_organization(data, org_id):
+        return {
+            "organizationName": data["organization"]["name"],
+            "id": org_id,
             "org_logo": "string",
             "addressline_1": data["contact"]["address1"],
             "addressline_2": data["contact"]["address2"],

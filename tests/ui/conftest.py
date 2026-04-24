@@ -9,9 +9,13 @@ from utils.api_client import APIClient
 from utils.data_reader import DataReader
 from utils.data_factory import DataFactory
 from pages.login_page import LoginPage
+from pages.role_page import RolePage
+from pages.permission_page import PermissionPage
 from pages.users_page import UsersPage
 from pages.organizationPage import OrganizationsPage
 from utils.data_factory import DataFactory
+from pages.template_agent_page import TemplateAgentPage
+from pages.mapAI_chat_page import MapAIChatPage
 
 
 ENV = get_env()
@@ -150,10 +154,44 @@ def new_organization_data():
 @pytest.fixture(scope="session")
 def update_organization_data():
     return DataReader.load_json("testdata/update_org.json")
+
+@pytest.fixture
+def role_page(page):
+    return RolePage(page)
+
+@pytest.fixture(scope="session")
+def new_role_data():
+    data = DataReader.load_json("testdata/new_role_data.json")
+    data["role"]["name"] = DataFactory.generate_role_name()
+    return data
+
+@pytest.fixture
+def permission_page(page):
+    return PermissionPage(page)
     
+@pytest.fixture(scope="session")
+def new_permission_data():
+    data = DataReader.load_json("testdata/new_permission_data.json")
+    data["permission"]["name"] = DataFactory.random_name(prefix="test_permission_")
+    return data
+
 @pytest.fixture
 def api_client(authenticated_page) -> APIClient:
     client = APIClient(base_url=config["api_url"])
     token = authenticated_page.evaluate("localStorage.getItem('accessToken')")
     client.set_token(token)
     return client
+
+@pytest.fixture(scope="session")
+def new_template_agent_data():
+    data = DataReader.load_json("testdata/template_agent_data.json")
+    data["template_agent"]["name"] = DataFactory.random_name(prefix="test_template_agent_")
+    return data
+
+@pytest.fixture
+def agent_page(page):
+    return TemplateAgentPage(page)
+
+@pytest.fixture
+def new_chat_page(page):
+    return MapAIChatPage(page)
