@@ -99,6 +99,20 @@ class DataFactory:
         }
 
     @staticmethod
+    def update_organization(data, org_id):
+        return {
+            "organizationName": data["organization"]["name"],
+            "id": org_id,
+            "org_logo": "string",
+            "addressline_1": data["contact"]["address1"],
+            "addressline_2": data["contact"]["address2"],
+            "state": data["contact"]["state"],
+            "city": data["contact"]["city"],
+            "country": data["contact"]["country"],
+            "zipcode": data["contact"]["zip_code"]
+        }
+
+    @staticmethod
     def user(data):
         return {
             "email": data["user"]["email"],

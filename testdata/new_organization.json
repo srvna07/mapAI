@@ -1,28 +1,29 @@
 {
-  "organization": {
-    "name": "test_org_"
-  },
-  "contact": {
-    "address1": "Test",
-    "address2": "Test",
-    "country": "Test",
-    "city": "Test",
-    "state": "Test",
-    "zip_code": "606201"
-  },
-  "Agent": [
-    "QuoteBot",
-    "Apogee"
-  ],
-  "Model": [
-    "gpt-4o-2",
-    "gpt-4o"
-  ],
-  "Instructions": [
-    "You are Geekey, a helpful assistant.",
-    "You are Apogee, a helpful assistant."
-  ],
-  "invalid_data": {
-    "organization_id": "12345678-90ab-xcvbniopu-1234-567890abcdef"
-  }
+    "organization": {
+        "name": "test_org_",
+        "id": "8db8d959-37be-4ebe-acc8-3615ccd79f5c"
+    },
+    "contact": {
+        "address1": "Test",
+        "address2": "Test",
+        "country": "Test",
+        "city": "Test",
+        "state": "Test",
+        "zip_code": "606201"
+    },
+    "Agent": [
+        "QuoteBot",
+        "Apogee"
+    ],
+    "Model": [
+        "gpt-4o-2",
+        "gpt-4o"
+    ],
+    "Instructions": [
+        "You are Geekey, a helpful assistant.",
+        "You are Apogee, a helpful assistant."
+    ],
+    "invalid_data": {
+        "organization_id": "12345678-90ab-xcvbniopu-1234-567890abcdef"
+    }
 }
